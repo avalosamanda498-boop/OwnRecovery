@@ -6,7 +6,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       {/* Build Indicator */}
       <div className="fixed top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded z-50">
-        VERCEL BUILD: {new Date().toISOString()}
+        BUILD: 3e7356e | {new Date().toLocaleString()}
       </div>
       
       {/* Hero Section */}
