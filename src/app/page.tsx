@@ -4,6 +4,11 @@ import { Heart, Shield, Users, Brain } from 'lucide-react'
 export default function HomePage() {
   return (
     <div className="min-h-screen">
+      {/* Build Indicator */}
+      <div className="fixed top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded z-50">
+        VERCEL BUILD: {new Date().toISOString()}
+      </div>
+      
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
