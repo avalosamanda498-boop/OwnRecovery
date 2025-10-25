@@ -31,10 +31,10 @@ export default function HomePage() {
                 Start Your Journey
               </Link>
               <Link 
-                href="/about" 
+                href="/auth/login" 
                 className="btn-secondary text-lg px-8 py-3"
               >
-                Learn More
+                Sign In
               </Link>
             </div>
           </div>
