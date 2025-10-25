@@ -6,7 +6,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       {/* Build Indicator */}
       <div className="fixed top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded z-50">
-        BUILD: 3e7356e | {new Date().toLocaleString()}
+        BUILD: 8a0f434 | {new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}
       </div>
       
       {/* Hero Section */}
