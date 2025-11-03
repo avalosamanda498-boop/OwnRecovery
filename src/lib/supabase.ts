@@ -1,8 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Next.js environment variables prefixed with NEXT_PUBLIC_ are embedded at build time
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()
+let supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+let supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+// Trim whitespace if values exist
+if (supabaseUrl) supabaseUrl = supabaseUrl.trim()
+if (supabaseAnonKey) supabaseAnonKey = supabaseAnonKey.trim()
 
 // Debug: Check if variables are available
 console.log('🔍 Supabase Config Check:')
@@ -12,19 +16,27 @@ console.log('Key exists:', !!supabaseAnonKey)
 console.log('Key length:', supabaseAnonKey?.length || 0)
 console.log('URL value:', supabaseUrl?.substring(0, 30) + '...')
 
-if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.length === 0 || supabaseAnonKey.length === 0) {
-  console.error('❌ Missing or empty Supabase environment variables!')
+// Validate values before creating client
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ Missing Supabase environment variables!')
   console.error('URL:', supabaseUrl || 'UNDEFINED')
-  console.error('Key length:', supabaseAnonKey?.length || 0)
-  console.error('Please ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in Vercel.')
-}
-
-// Only create client if we have valid values
-if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.length === 0 || supabaseAnonKey.length === 0) {
+  console.error('Key:', supabaseAnonKey ? 'DEFINED' : 'UNDEFINED')
   throw new Error('Supabase configuration is missing. Please check environment variables in Vercel.')
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+if (supabaseUrl.length === 0 || supabaseAnonKey.length === 0) {
+  console.error('❌ Empty Supabase environment variables!')
+  console.error('URL length:', supabaseUrl.length)
+  console.error('Key length:', supabaseAnonKey.length)
+  throw new Error('Supabase configuration is empty. Please check environment variables in Vercel.')
+}
+
+// Create client with explicit validation
+console.log('✅ Creating Supabase client with valid configuration')
+export const supabase = createClient(
+  supabaseUrl as string,
+  supabaseAnonKey as string
+)
 
 // For server-side operations
 export const supabaseAdmin = createClient(
