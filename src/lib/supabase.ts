@@ -1,51 +1,65 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-// Next.js environment variables prefixed with NEXT_PUBLIC_ are embedded at build time
-let supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-let supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+// Lazy initialization to ensure environment variables are fully loaded
+let supabaseClient: SupabaseClient | null = null
 
-// Trim whitespace if values exist
-if (supabaseUrl) supabaseUrl = supabaseUrl.trim()
-if (supabaseAnonKey) supabaseAnonKey = supabaseAnonKey.trim()
+function getSupabaseClient(): SupabaseClient {
+  if (supabaseClient) {
+    return supabaseClient
+  }
 
-// Debug: Check if variables are available
-console.log('🔍 Supabase Config Check:')
-console.log('URL exists:', !!supabaseUrl)
-console.log('URL length:', supabaseUrl?.length || 0)
-console.log('Key exists:', !!supabaseAnonKey)
-console.log('Key length:', supabaseAnonKey?.length || 0)
-console.log('URL value:', supabaseUrl?.substring(0, 30) + '...')
+  // Get environment variables fresh each time
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim()
+  const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim()
 
-// Validate values before creating client
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Missing Supabase environment variables!')
-  console.error('URL:', supabaseUrl || 'UNDEFINED')
-  console.error('Key:', supabaseAnonKey ? 'DEFINED' : 'UNDEFINED')
-  throw new Error('Supabase configuration is missing. Please check environment variables in Vercel.')
+  console.log('🔍 Creating Supabase client:')
+  console.log('  URL exists:', !!url)
+  console.log('  URL length:', url.length)
+  console.log('  Key exists:', !!key)
+  console.log('  Key length:', key.length)
+  
+  if (!url || !key || url.length === 0 || key.length === 0) {
+    const error = `Supabase config missing: URL=${!!url}, KEY=${!!key}`
+    console.error('❌', error)
+    throw new Error(error)
+  }
+
+  console.log('  URL:', url.substring(0, 30) + '...')
+  console.log('  Key starts with:', key.substring(0, 20))
+  
+  // Verify key format
+  if (!key.startsWith('eyJ')) {
+    console.error('❌ Invalid key format - should start with "eyJ"')
+    throw new Error('Invalid Supabase anon key format')
+  }
+
+  console.log('✅ Creating client with valid config')
+  supabaseClient = createClient(url, key)
+  console.log('✅ Supabase client created successfully')
+  
+  return supabaseClient
 }
 
-if (supabaseUrl.length === 0 || supabaseAnonKey.length === 0) {
-  console.error('❌ Empty Supabase environment variables!')
-  console.error('URL length:', supabaseUrl.length)
-  console.error('Key length:', supabaseAnonKey.length)
-  throw new Error('Supabase configuration is empty. Please check environment variables in Vercel.')
-}
+// Export a getter that creates client lazily
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    const client = getSupabaseClient()
+    const value = (client as any)[prop]
+    if (typeof value === 'function') {
+      return value.bind(client)
+    }
+    return value
+  },
+})
 
-// Create client with explicit validation
-console.log('✅ Creating Supabase client with valid configuration')
-export const supabase = createClient(
-  supabaseUrl as string,
-  supabaseAnonKey as string
-)
-
-// For server-side operations
-export const supabaseAdmin = createClient(
-  supabaseUrl!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  {
+// For server-side operations (only used on server side)
+export const supabaseAdmin = (() => {
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim()
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  return createClient(url, key, {
     auth: {
       autoRefreshToken: false,
       persistSession: false
     }
-  }
-)
+  })
+})()
