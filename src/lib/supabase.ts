@@ -1,56 +1,41 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-// Lazy initialization to ensure environment variables are fully loaded
-let supabaseClient: SupabaseClient | null = null
+// Get environment variables - these should be embedded at build time by Next.js
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() || ''
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() || ''
 
-function getSupabaseClient(): SupabaseClient {
-  if (supabaseClient) {
-    return supabaseClient
-  }
-
-  // Get environment variables fresh each time
-  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim()
-  const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim()
-
-  console.log('🔍 Creating Supabase client:')
-  console.log('  URL exists:', !!url)
-  console.log('  URL length:', url.length)
-  console.log('  Key exists:', !!key)
-  console.log('  Key length:', key.length)
-  
-  if (!url || !key || url.length === 0 || key.length === 0) {
-    const error = `Supabase config missing: URL=${!!url}, KEY=${!!key}`
-    console.error('❌', error)
-    throw new Error(error)
-  }
-
-  console.log('  URL:', url.substring(0, 30) + '...')
-  console.log('  Key starts with:', key.substring(0, 20))
-  
-  // Verify key format
-  if (!key.startsWith('eyJ')) {
-    console.error('❌ Invalid key format - should start with "eyJ"')
-    throw new Error('Invalid Supabase anon key format')
-  }
-
-  console.log('✅ Creating client with valid config')
-  supabaseClient = createClient(url, key)
-  console.log('✅ Supabase client created successfully')
-  
-  return supabaseClient
+// Debug logging
+if (typeof window !== 'undefined') {
+  console.log('🔍 Supabase Environment Check (Client Side):')
+  console.log('  URL:', SUPABASE_URL ? SUPABASE_URL.substring(0, 30) + '...' : 'MISSING')
+  console.log('  URL length:', SUPABASE_URL.length)
+  console.log('  Key:', SUPABASE_ANON_KEY ? SUPABASE_ANON_KEY.substring(0, 20) + '...' : 'MISSING')
+  console.log('  Key length:', SUPABASE_ANON_KEY.length)
+  console.log('  process.env keys:', Object.keys(process.env).filter(k => k.includes('SUPABASE')))
 }
 
-// Export a getter that creates client lazily
-export const supabase = new Proxy({} as SupabaseClient, {
-  get(_target, prop) {
-    const client = getSupabaseClient()
-    const value = (client as any)[prop]
-    if (typeof value === 'function') {
-      return value.bind(client)
-    }
-    return value
-  },
-})
+// Validate configuration
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  const errorMsg = `Missing Supabase config. URL: ${SUPABASE_URL ? 'SET' : 'MISSING'}, KEY: ${SUPABASE_ANON_KEY ? 'SET' : 'MISSING'}`
+  console.error('❌', errorMsg)
+  throw new Error(errorMsg)
+}
+
+if (SUPABASE_URL.length === 0 || SUPABASE_ANON_KEY.length === 0) {
+  const errorMsg = `Empty Supabase config. URL length: ${SUPABASE_URL.length}, KEY length: ${SUPABASE_ANON_KEY.length}`
+  console.error('❌', errorMsg)
+  throw new Error(errorMsg)
+}
+
+if (!SUPABASE_ANON_KEY.startsWith('eyJ')) {
+  console.error('❌ Invalid Supabase key format')
+  throw new Error('Invalid Supabase anon key format')
+}
+
+// Create client - this will throw if config is invalid
+console.log('✅ Creating Supabase client with validated config')
+export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+console.log('✅ Supabase client created')
 
 // For server-side operations (only used on server side)
 export const supabaseAdmin = (() => {
