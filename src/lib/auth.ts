@@ -7,6 +7,7 @@ export interface AuthUser {
   role: UserRole | null
   full_name: string | null
   is_admin: boolean
+  onboarding_completed?: boolean
 }
 
 export async function signUp(email: string, password: string, fullName: string) {
@@ -44,16 +45,50 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   
   if (!user) return null
 
-  // Get user profile from our users table
-  const { data: profile, error } = await supabase
+  // Try to load profile (maybeSingle avoids 406 when no row yet)
+  let { data: profile, error } = await supabase
     .from('users')
-    .select('role, full_name, is_admin')
+    .select('role, full_name, is_admin, onboarding_completed')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
   if (error) {
     console.error('Error fetching user profile:', error)
     return null
+  }
+
+  // If no profile row exists yet, create one and re-fetch
+  if (!profile) {
+    const insertPayload = {
+      id: user.id,
+      email: user.email,
+      full_name: user.user_metadata?.full_name ?? null,
+    }
+
+    const { error: insertError } = await supabase.from('users').insert(insertPayload)
+    if (insertError) {
+      console.error('Error creating user profile:', insertError)
+      return {
+        id: user.id,
+        email: user.email!,
+        role: null,
+        full_name: user.user_metadata?.full_name ?? null,
+        is_admin: false,
+        onboarding_completed: false,
+      }
+    }
+
+    const { data: newProfile, error: refetchError } = await supabase
+      .from('users')
+      .select('role, full_name, is_admin, onboarding_completed')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (refetchError) {
+      console.error('Error re-fetching profile after insert:', refetchError)
+    } else {
+      profile = newProfile
+    }
   }
 
   return {
@@ -62,6 +97,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     role: profile?.role || null,
     full_name: profile?.full_name || null,
     is_admin: profile?.is_admin || false,
+    onboarding_completed: profile?.onboarding_completed || false,
   }
 }
 
@@ -81,6 +117,15 @@ export async function updateUserProfile(userId: string, updates: {
   primary_substance?: string
   biggest_challenge?: string
   check_in_time?: string
+  stage_of_change?: string
+  onboarding_completed?: boolean
+  support_relationship?: string
+  pending_support_invite_code?: string | null
+  notification_preferences?: {
+    daily_reminders: boolean
+    milestone_celebrations: boolean
+    supporter_messages: boolean
+  }
 }) {
   const { error } = await supabase
     .from('users')
