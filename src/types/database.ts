@@ -14,9 +14,13 @@ export interface User {
   primary_substance?: string
   biggest_challenge?: string
   check_in_time?: string
+  stage_of_change?: string
+  onboarding_completed?: boolean
   
   // Supporter-specific fields
   connected_users?: string[]
+  support_relationship?: string
+  pending_support_invite_code?: string
   
   // Shared fields
   timezone?: string
