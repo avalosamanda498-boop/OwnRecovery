@@ -46,15 +46,21 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   if (!user) return null
 
   // Try to load profile (maybeSingle avoids 406 when no row yet)
-  let { data: profile, error } = await supabase
+  let profile = null
+
+  const { data: profileRows, error: selectError } = await supabase
     .from('users')
     .select('role, full_name, is_admin, onboarding_completed')
     .eq('id', user.id)
-    .maybeSingle()
+    .limit(1)
 
-  if (error) {
-    console.error('Error fetching user profile:', error)
+  if (selectError) {
+    console.error('Error fetching user profile:', selectError)
     return null
+  }
+
+  if (profileRows && profileRows.length > 0) {
+    profile = profileRows[0]
   }
 
   // If no profile row exists yet, create one and re-fetch
@@ -78,16 +84,16 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
       }
     }
 
-    const { data: newProfile, error: refetchError } = await supabase
+    const { data: newProfileRows, error: refetchError } = await supabase
       .from('users')
       .select('role, full_name, is_admin, onboarding_completed')
       .eq('id', user.id)
-      .maybeSingle()
+      .limit(1)
 
     if (refetchError) {
       console.error('Error re-fetching profile after insert:', refetchError)
     } else {
-      profile = newProfile
+      profile = newProfileRows && newProfileRows.length > 0 ? newProfileRows[0] : null
     }
   }
 
