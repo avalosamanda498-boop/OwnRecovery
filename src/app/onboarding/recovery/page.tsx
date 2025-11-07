@@ -49,7 +49,7 @@ export default function RecoveryOnboardingPage() {
     try {
       await updateUserProfile(userId, {
         primary_substance: primarySubstance,
-        sobriety_start_date: sobrietyStartDate || null,
+        sobriety_start_date: sobrietyStartDate || undefined,
         biggest_challenge: biggestChallenge,
         check_in_time: checkInTime,
         onboarding_completed: true,
