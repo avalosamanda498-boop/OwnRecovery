@@ -36,14 +36,22 @@ export const supabase: SupabaseClient = createClient(
   }
 )
 
-// For server-side operations (only used on server side)
-export const supabaseAdmin = (() => {
-  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim()
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  return createClient(url, key, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  })
-})()
+// For server-side operations (only initialize when running on the server)
+let supabaseAdmin: SupabaseClient | null = null
+
+if (typeof window === 'undefined') {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+
+  if (!serviceRoleKey) {
+    console.warn('⚠️  SUPABASE_SERVICE_ROLE_KEY is not set. Admin client not initialized.')
+  } else {
+    supabaseAdmin = createClient(SUPABASE_URL, serviceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    })
+  }
+}
+
+export { supabaseAdmin }
