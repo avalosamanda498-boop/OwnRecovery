@@ -47,3 +47,10 @@ CREATE POLICY "Users can insert own profile" ON users
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE INDEX IF NOT EXISTS idx_users_is_admin ON users(is_admin);
+
+-- Phase 1 onboarding enhancements
+ALTER TABLE users ADD COLUMN IF NOT EXISTS stage_of_change TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN DEFAULT false;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS support_relationship TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS pending_support_invite_code TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT false;
