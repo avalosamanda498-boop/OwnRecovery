@@ -50,7 +50,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
   const { data: profileRows, error: selectError } = await supabase
     .from('users')
-    .select('role, full_name, is_admin, onboarding_completed')
+    .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code')
     .eq('id', user.id)
     .limit(1)
 
@@ -86,7 +86,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
     const { data: newProfileRows, error: refetchError } = await supabase
       .from('users')
-      .select('role, full_name, is_admin, onboarding_completed')
+      .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code')
       .eq('id', user.id)
       .limit(1)
 
