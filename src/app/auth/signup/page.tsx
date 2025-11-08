@@ -4,11 +4,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signUp } from '@/lib/auth'
+import { supabase } from '@/lib/supabase'
+import type { UserType } from '@/types/database'
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
+  const [userType, setUserType] = useState<UserType>('regular')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
@@ -20,10 +23,30 @@ export default function SignUpPage() {
 
     try {
       const { user } = await signUp(email, password, fullName)
-      
+
       if (user) {
-        // Redirect to role selection after successful signup
-        router.push('/auth/role-selection')
+        const profilePayload = {
+          id: user.id,
+          email,
+          full_name: fullName,
+          user_type: userType,
+          is_admin: userType === 'admin',
+          updated_at: new Date().toISOString(),
+        }
+
+        const { error: profileError } = await supabase
+          .from('users')
+          .upsert(profilePayload, { onConflict: 'id' })
+
+        if (profileError) {
+          throw profileError
+        }
+
+        if (userType === 'admin') {
+          router.push('/admin')
+        } else {
+          router.push('/auth/role-selection')
+        }
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred during signup')
@@ -93,6 +116,26 @@ export default function SignUpPage() {
                 placeholder="Create a password"
                 minLength={6}
               />
+            </div>
+
+            <div>
+              <label htmlFor="userType" className="block text-sm font-medium text-gray-700">
+                User Type (temporary)
+              </label>
+              <select
+                id="userType"
+                name="userType"
+                value={userType}
+                onChange={(e) => setUserType(e.target.value as UserType)}
+                className="input-field mt-1"
+              >
+                <option value="regular">Regular User</option>
+                <option value="supporter">Support / Friend</option>
+                <option value="admin">Admin</option>
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                We&apos;ll remove this temporary selector once portals and permissions are finalized.
+              </p>
             </div>
           </div>
 

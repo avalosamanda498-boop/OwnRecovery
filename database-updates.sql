@@ -7,11 +7,12 @@
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.users (id, email, full_name, created_at, updated_at)
+  INSERT INTO public.users (id, email, full_name, user_type, created_at, updated_at)
   VALUES (
     NEW.id,
     NEW.email,
     NEW.raw_user_meta_data->>'full_name',
+    'regular',
     NOW(),
     NOW()
   );
@@ -55,3 +56,4 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS support_relationship TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS pending_support_invite_code TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT false;
 ALTER TABLE users ALTER COLUMN role DROP NOT NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS user_type TEXT DEFAULT 'regular';

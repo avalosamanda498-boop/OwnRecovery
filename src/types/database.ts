@@ -1,10 +1,11 @@
 export type UserRole = 'recovery' | 'still_using' | 'supporter'
+export type UserType = 'regular' | 'supporter' | 'admin'
 
 export interface User {
   id: string
   email: string
   full_name: string
-  role: UserRole
+  role?: UserRole
   avatar_url?: string
   created_at: string
   updated_at: string
@@ -21,6 +22,7 @@ export interface User {
   connected_users?: string[]
   support_relationship?: string
   pending_support_invite_code?: string
+  user_type?: UserType
   
   // Shared fields
   timezone?: string

@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import { UserRole } from '@/types/database'
+import { UserRole, UserType } from '@/types/database'
 
 export interface AuthUser {
   id: string
@@ -8,6 +8,7 @@ export interface AuthUser {
   full_name: string | null
   is_admin: boolean
   onboarding_completed?: boolean
+  user_type?: UserType
 }
 
 export async function signUp(email: string, password: string, fullName: string) {
@@ -50,7 +51,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
   const { data: profileRows, error: selectError } = await supabase
     .from('users')
-    .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code')
+    .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type')
     .eq('id', user.id)
     .limit(1)
 
@@ -69,6 +70,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
       id: user.id,
       email: user.email,
       full_name: user.user_metadata?.full_name ?? null,
+      user_type: 'regular',
     }
 
     const { error: insertError } = await supabase.from('users').insert(insertPayload)
@@ -86,7 +88,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
     const { data: newProfileRows, error: refetchError } = await supabase
       .from('users')
-      .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code')
+      .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type')
       .eq('id', user.id)
       .limit(1)
 
@@ -104,6 +106,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     full_name: profile?.full_name || null,
     is_admin: profile?.is_admin || false,
     onboarding_completed: profile?.onboarding_completed || false,
+    user_type: (profile?.user_type as UserType) || 'regular',
   }
 }
 
@@ -127,6 +130,8 @@ export async function updateUserProfile(userId: string, updates: {
   onboarding_completed?: boolean
   support_relationship?: string
   pending_support_invite_code?: string | null
+  user_type?: UserType
+  is_admin?: boolean
   notification_preferences?: {
     daily_reminders: boolean
     milestone_celebrations: boolean

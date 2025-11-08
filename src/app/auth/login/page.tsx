@@ -24,7 +24,9 @@ export default function LoginPage() {
         // Get user profile to check if they have completed onboarding
         const userProfile = await getCurrentUser()
         
-        if (userProfile?.role) {
+        if (userProfile?.user_type === 'admin') {
+          router.push('/admin')
+        } else if (userProfile?.role) {
           // User has completed onboarding, redirect to dashboard
           router.push('/dashboard')
         } else {

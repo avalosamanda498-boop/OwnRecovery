@@ -17,6 +17,11 @@ export default function DashboardIndexPage() {
         return
       }
 
+      if (user.user_type === 'admin') {
+        router.replace('/admin')
+        return
+      }
+
       if (!user.role) {
         router.replace('/auth/role-selection')
         return
