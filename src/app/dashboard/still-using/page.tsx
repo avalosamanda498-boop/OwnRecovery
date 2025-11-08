@@ -1,6 +1,24 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
+import { getCurrentUser, type AuthUser } from '@/lib/auth'
+
 export default function StillUsingDashboardPage() {
+  const [user, setUser] = useState<AuthUser | null>(null)
+
+  useEffect(() => {
+    getCurrentUser().then(setUser)
+  }, [])
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary-50 to-primary-50">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600" />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 py-12 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -10,6 +28,15 @@ export default function StillUsingDashboardPage() {
             This space grows with you. We’ll surface gentle prompts, coping ideas, and real stories whenever you’re ready.
           </p>
         </header>
+
+        <MoodCravingLogger
+          user={user}
+          roleCopy={{
+            title: 'Check in with yourself',
+            subtitle: 'Log how today feels—no pressure, no judgment. Honest check-ins help us pair the right tools when you need them.',
+            success: 'Thanks for being honest with yourself today. Every check-in is a step toward feeling more in control.',
+          }}
+        />
 
         <section className="grid md:grid-cols-2 gap-6">
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">

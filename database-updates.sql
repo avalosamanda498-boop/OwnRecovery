@@ -57,3 +57,31 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS pending_support_invite_code TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT false;
 ALTER TABLE users ALTER COLUMN role DROP NOT NULL;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS user_type TEXT DEFAULT 'regular';
+
+-- Phase 2 mood & craving tracking
+CREATE TABLE IF NOT EXISTS public.mood_entries (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  mood mood_type NOT NULL,
+  craving_level craving_level NOT NULL,
+  note TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_mood_entries_user_id ON public.mood_entries(user_id);
+CREATE INDEX IF NOT EXISTS idx_mood_entries_created_at ON public.mood_entries(created_at);
+
+ALTER TABLE public.mood_entries ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY IF NOT EXISTS "Users can insert their own mood entries" ON public.mood_entries
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY IF NOT EXISTS "Users can view their own mood entries" ON public.mood_entries
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY IF NOT EXISTS "Users can update their own mood entries" ON public.mood_entries
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY IF NOT EXISTS "Users can delete their own mood entries" ON public.mood_entries
+  FOR DELETE USING (auth.uid() = user_id);
