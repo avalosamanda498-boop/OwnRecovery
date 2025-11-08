@@ -41,6 +41,14 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+@layer base {
+  input,
+  textarea,
+  select {
+    @apply text-gray-900 placeholder-gray-400 bg-white;
+  }
+}
+
 a {
   color: inherit;
   text-decoration: none;
