@@ -88,6 +88,7 @@ export default function SupporterDashboardPage() {
             subtitle: 'Supporters need care too. Log a quick check-in so we can surface resources that help you stay grounded.',
             success: 'Thanks for taking a moment for yourself. We’ll use these check-ins to keep you supported as well.',
           }}
+          showCravings={false}
         />
 
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
