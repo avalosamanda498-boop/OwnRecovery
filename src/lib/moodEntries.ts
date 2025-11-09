@@ -90,3 +90,80 @@ export async function fetchLatestMoodEntry() {
   return data
 }
 
+const MOOD_SCORE_MAP: Record<MoodOption, number> = {
+  happy: 5,
+  neutral: 3,
+  sad: 1,
+  anxious: 2,
+  angry: 2,
+  tired: 2,
+  energized: 4,
+}
+
+const CRAVING_SCORE_MAP: Record<Exclude<CravingOption, 'used_today'>, number> = {
+  none: 1,
+  mild: 2,
+  strong: 4,
+  at_risk: 5,
+}
+
+export interface MoodHistoryPoint {
+  date: string
+  moodScore: number
+  moodLabel: MoodOption
+  cravingScore: number
+  cravingLabel: CravingOption
+}
+
+export async function fetchMoodHistory(days: number): Promise<MoodHistoryPoint[]> {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
+
+  if (authError || !user) {
+    throw new Error('You must be signed in to view mood history.')
+  }
+
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - (days - 1))
+
+  const { data, error } = await supabase
+    .from('mood_entries')
+    .select('mood, craving_level, created_at')
+    .eq('user_id', user.id)
+    .gte('created_at', cutoff.toISOString())
+    .order('created_at', { ascending: true })
+
+  if (error) throw error
+
+  if (!data) return []
+
+  const history = data.map((entry) => {
+    const date = new Date(entry.created_at)
+    const dateKey = date.toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+    })
+
+    const moodLabel = entry.mood as MoodOption
+    const cravingLabel = entry.craving_level as CravingOption
+
+    const moodScore = MOOD_SCORE_MAP[moodLabel] ?? 3
+    const cravingScore =
+      cravingLabel === 'used_today'
+        ? 5
+        : CRAVING_SCORE_MAP[cravingLabel as Exclude<CravingOption, 'used_today'>] ?? 3
+
+    return {
+      date: dateKey,
+      moodScore,
+      moodLabel,
+      cravingScore,
+      cravingLabel,
+    }
+  })
+
+  return history
+}
+

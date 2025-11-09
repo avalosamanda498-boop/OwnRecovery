@@ -3,12 +3,16 @@
 import { useEffect, useState } from 'react'
 import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
 import LogStreakGraph from '@/components/tracking/LogStreakGraph'
+import MoodTrendChart from '@/components/tracking/MoodTrendChart'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
+import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
 import { fetchLogBasedStreak } from '@/lib/streaks'
 
 export default function StillUsingDashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [streak, setStreak] = useState<{ current: number; nextMilestone: number; daysUntilMilestone: number; message: string } | null>(null)
+  const [history, setHistory] = useState<MoodHistoryPoint[]>([])
+  const [range, setRange] = useState<7 | 14 | 30>(7)
 
   useEffect(() => {
     getCurrentUser().then((profile) => {
@@ -18,11 +22,45 @@ export default function StillUsingDashboardPage() {
       }
     })
   }, [])
+
+  useEffect(() => {
+    fetchMoodHistory(range)
+      .then(setHistory)
+      .catch(() => setHistory([]))
+  }, [range])
         {streak && (
           <section className="bg-white border border-secondary-100 rounded-2xl shadow-sm p-6">
             <LogStreakGraph current={streak.current} nextMilestone={streak.nextMilestone} role="still_using" />
           </section>
         )}
+
+        <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Mood & craving trends</h2>
+              <p className="text-sm text-gray-600">
+                Notice what lifts you up and what makes urges stronger across the week.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {[7, 14, 30].map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setRange(value as 7 | 14 | 30)}
+                  className={`px-3 py-1.5 rounded-full border text-sm transition-colors ${
+                    range === value
+                      ? 'border-secondary-500 bg-secondary-50 text-secondary-700'
+                      : 'border-gray-300 text-gray-600 hover:border-secondary-300'
+                  }`}
+                >
+                  Last {value} days
+                </button>
+              ))}
+            </div>
+          </div>
+          <MoodTrendChart data={history} rangeLabel={`${range} days`} />
+        </section>
 
   if (!user) {
     return (

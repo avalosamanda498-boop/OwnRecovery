@@ -4,12 +4,16 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
 import LogStreakGraph from '@/components/tracking/LogStreakGraph'
+import MoodTrendChart from '@/components/tracking/MoodTrendChart'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
+import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
 import { fetchLogBasedStreak } from '@/lib/streaks'
 
 export default function SupporterDashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [streak, setStreak] = useState<{ current: number; nextMilestone: number; daysUntilMilestone: number; message: string } | null>(null)
+  const [history, setHistory] = useState<MoodHistoryPoint[]>([])
+  const [range, setRange] = useState<7 | 14 | 30>(7)
 
   useEffect(() => {
     getCurrentUser().then((profile) => {
@@ -19,11 +23,45 @@ export default function SupporterDashboardPage() {
       }
     })
   }, [])
+
+  useEffect(() => {
+    fetchMoodHistory(range)
+      .then(setHistory)
+      .catch(() => setHistory([]))
+  }, [range])
         {streak && (
           <section className="bg-white border border-success-100 rounded-2xl shadow-sm p-6">
             <LogStreakGraph current={streak.current} nextMilestone={streak.nextMilestone} role="supporter" />
           </section>
         )}
+
+        <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Your well-being trends</h2>
+              <p className="text-sm text-gray-600">
+                Notice how your mood shifts as you support someone else. Taking care of you helps them too.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {[7, 14, 30].map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setRange(value as 7 | 14 | 30)}
+                  className={`px-3 py-1.5 rounded-full border text-sm transition-colors ${
+                    range === value
+                      ? 'border-success-500 bg-success-50 text-success-700'
+                      : 'border-gray-300 text-gray-600 hover:border-success-300'
+                  }`}
+                >
+                  Last {value} days
+                </button>
+              ))}
+            </div>
+          </div>
+          <MoodTrendChart data={history} rangeLabel={`${range} days`} />
+        </section>
 
   if (!user) {
     return (
