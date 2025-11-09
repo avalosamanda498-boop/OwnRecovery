@@ -20,7 +20,7 @@ export default function StillUsingDashboardPage() {
   }, [])
         {streak && (
           <section className="bg-white border border-secondary-100 rounded-2xl shadow-sm p-6">
-            <LogStreakGraph streak={streak} role="still_using" />
+            <LogStreakGraph current={streak.current} nextMilestone={streak.nextMilestone} role="still_using" />
           </section>
         )}
 

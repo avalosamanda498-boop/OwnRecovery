@@ -21,7 +21,7 @@ export default function SupporterDashboardPage() {
   }, [])
         {streak && (
           <section className="bg-white border border-success-100 rounded-2xl shadow-sm p-6">
-            <LogStreakGraph streak={streak} role="supporter" />
+            <LogStreakGraph current={streak.current} nextMilestone={streak.nextMilestone} role="supporter" />
           </section>
         )}
 

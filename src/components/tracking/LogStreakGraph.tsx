@@ -6,27 +6,25 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts'
-import type { StreakSummary } from '@/lib/streaks'
-
 interface LogStreakGraphProps {
-  streak: StreakSummary
+  current: number
+  nextMilestone: number
   role: 'still_using' | 'supporter'
 }
 
-export default function LogStreakGraph({ streak, role }: LogStreakGraphProps) {
-  const bars = streak.milestones
-    .filter((milestone) => milestone <= streak.nextMilestone)
+const DEFAULT_MILESTONES = [1, 3, 5, 7, 10, 14, 21, 30, 45, 60, 90]
+
+export default function LogStreakGraph({ current, nextMilestone, role }: LogStreakGraphProps) {
+  const milestones = DEFAULT_MILESTONES.includes(nextMilestone)
+    ? DEFAULT_MILESTONES
+    : [...DEFAULT_MILESTONES, nextMilestone].sort((a, b) => a - b)
+
+  const bars = milestones
+    .filter((milestone) => milestone <= nextMilestone)
     .map((milestone) => ({
       milestone,
-      reached: milestone <= streak.current ? 1 : 0,
+      reached: milestone <= current ? 1 : 0,
     }))
-
-  if (!bars.find((bar) => bar.milestone === streak.nextMilestone)) {
-    bars.push({
-      milestone: streak.nextMilestone,
-      reached: 0,
-    })
-  }
 
   return (
     <div className="space-y-2">
@@ -35,9 +33,11 @@ export default function LogStreakGraph({ streak, role }: LogStreakGraphProps) {
           <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
             {role === 'still_using' ? 'Consistency streak' : 'Supporter streak'}
           </p>
-          <p className="text-3xl font-bold text-primary-600">{streak.current} days</p>
+          <p className="text-3xl font-bold text-primary-600">{current} days</p>
         </div>
-        <p className="text-sm text-gray-600 md:text-right">{streak.message}</p>
+        <p className="text-sm text-gray-600 md:text-right">
+          Next milestone at {nextMilestone} days. Keep the momentum going!
+        </p>
       </div>
       <div className="w-full h-40">
         <ResponsiveContainer>

@@ -6,7 +6,6 @@ export interface StreakSummary {
   nextMilestone: number
   daysUntilMilestone: number
   message: string
-  milestones: number[]
 }
 
 const DEFAULT_MILESTONES = [1, 3, 5, 7, 10, 14, 21, 30, 45, 60, 90, 120, 180, 270, 365]
@@ -43,7 +42,7 @@ function streakSummary(current: number, context: { role: string }) {
       message = ''
   }
 
-  return { current, nextMilestone, daysUntilMilestone, message, milestones }
+  return { current, nextMilestone, daysUntilMilestone, message }
 }
 
 export async function fetchRecoveryStreak(user: AuthUser): Promise<StreakSummary> {
