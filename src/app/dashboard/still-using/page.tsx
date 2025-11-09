@@ -3,13 +3,38 @@
 import { useEffect, useState } from 'react'
 import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
+import { fetchLogBasedStreak } from '@/lib/streaks'
 
 export default function StillUsingDashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
+  const [streak, setStreak] = useState<{ current: number; nextMilestone: number; daysUntilMilestone: number; message: string } | null>(null)
 
   useEffect(() => {
-    getCurrentUser().then(setUser)
+    getCurrentUser().then((profile) => {
+      setUser(profile)
+      if (profile) {
+        fetchLogBasedStreak(profile).then(setStreak).catch(() => setStreak(null))
+      }
+    })
   }, [])
+        {streak && (
+          <section className="bg-white border border-secondary-100 rounded-2xl shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-gray-900">Consistency streak</h2>
+            <div className="mt-3 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <p className="text-4xl font-bold text-secondary-600">{streak.current}</p>
+                <p className="text-sm text-gray-600">day check-in streak</p>
+              </div>
+              <div className="flex-1 text-sm text-gray-700">
+                <p>
+                  Next milestone:{' '}
+                  <span className="font-medium text-gray-900">{streak.nextMilestone} day(s)</span>
+                </p>
+                <p className="mt-1">{streak.message}</p>
+              </div>
+            </div>
+          </section>
+        )}
 
   if (!user) {
     return (

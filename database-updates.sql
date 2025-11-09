@@ -57,6 +57,8 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS pending_support_invite_code TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT false;
 ALTER TABLE users ALTER COLUMN role DROP NOT NULL;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS user_type TEXT DEFAULT 'regular';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_mood_log_at DATE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_support_action_at DATE;
 
 -- Phase 2 mood & craving tracking
 CREATE TABLE IF NOT EXISTS public.mood_entries (

@@ -9,6 +9,7 @@ export interface AuthUser {
   is_admin: boolean
   onboarding_completed?: boolean
   user_type?: UserType
+  sobriety_start_date?: string | null
 }
 
 export async function signUp(email: string, password: string, fullName: string) {
@@ -51,7 +52,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
   const { data: profileRows, error: selectError } = await supabase
     .from('users')
-    .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type')
+    .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type, sobriety_start_date')
     .eq('id', user.id)
     .limit(1)
 
@@ -88,7 +89,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
     const { data: newProfileRows, error: refetchError } = await supabase
       .from('users')
-      .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type')
+      .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type, sobriety_start_date')
       .eq('id', user.id)
       .limit(1)
 
@@ -107,6 +108,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     is_admin: profile?.is_admin || false,
     onboarding_completed: profile?.onboarding_completed || false,
     user_type: (profile?.user_type as UserType) || 'regular',
+    sobriety_start_date: profile?.sobriety_start_date || null,
   }
 }
 
