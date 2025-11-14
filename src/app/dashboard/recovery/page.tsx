@@ -29,6 +29,34 @@ export default function RecoveryDashboardPage() {
       .then(setHistory)
       .catch(() => setHistory([]))
   }, [range])
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-12 px-4">
+      <div className="max-w-5xl mx-auto space-y-8">
+        <header className="bg-white border border-primary-100 shadow-sm rounded-2xl p-8">
+          <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user.full_name || 'friend'}</h1>
+          <p className="mt-2 text-gray-600">
+            This is your recovery home base. We’ll surface streaks, mood insights, encouragement, and a quick path to support as we build out the full experience.
+          </p>
+        </header>
+
+        <MoodCravingLogger
+          user={user}
+          roleCopy={{
+            title: 'Log how you’re doing today',
+            subtitle: 'Tracking each moment helps you spot trends, celebrate wins, and reach out when cravings feel heavy.',
+            success: 'Nice work staying connected to your journey. Keep showing up—you’re doing this!',
+          }}
+        />
+
         {streak && (
           <section className="bg-white border border-primary-100 rounded-2xl shadow-sm p-6">
             <RecoveryStreakRadial streak={streak} />
@@ -62,34 +90,6 @@ export default function RecoveryDashboardPage() {
           </div>
           <MoodTrendChart data={history} rangeLabel={`${range} days`} />
         </section>
-
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600" />
-      </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-12 px-4">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <header className="bg-white border border-primary-100 shadow-sm rounded-2xl p-8">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user.full_name || 'friend'}</h1>
-          <p className="mt-2 text-gray-600">
-            This is your recovery home base. We’ll surface streaks, mood insights, encouragement, and a quick path to support as we build out the full experience.
-          </p>
-        </header>
-
-        <MoodCravingLogger
-          user={user}
-          roleCopy={{
-            title: 'Log how you’re doing today',
-            subtitle: 'Tracking each moment helps you spot trends, celebrate wins, and reach out when cravings feel heavy.',
-            success: 'Nice work staying connected to your journey. Keep showing up—you’re doing this!',
-          }}
-        />
 
         <section className="grid md:grid-cols-3 gap-6">
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">

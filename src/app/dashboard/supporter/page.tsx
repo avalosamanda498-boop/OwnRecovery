@@ -29,6 +29,35 @@ export default function SupporterDashboardPage() {
       .then(setHistory)
       .catch(() => setHistory([]))
   }, [range])
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-support-gradient/10 to-primary-50">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-support-gradient/10 to-primary-50 py-12 px-4">
+      <div className="max-w-5xl mx-auto space-y-8">
+        <header className="bg-white border border-success-100 rounded-2xl shadow-sm p-8">
+          <h1 className="text-3xl font-bold text-gray-900">Thank you for showing up</h1>
+          <p className="mt-2 text-gray-600">
+            This dashboard will soon track everyone you’re supporting, share encouragement prompts, and surface resources just for loved ones and allies.
+          </p>
+        </header>
+
+        <MoodCravingLogger
+          user={user}
+          roleCopy={{
+            title: 'How are you holding up?',
+            subtitle: 'Supporters need care too. Log a quick check-in so we can surface resources that help you stay grounded.',
+            success: 'Thanks for taking a moment for yourself. We’ll use these check-ins to keep you supported as well.',
+          }}
+          showCravings={false}
+        />
+
         {streak && (
           <section className="bg-white border border-success-100 rounded-2xl shadow-sm p-6">
             <LogStreakGraph current={streak.current} nextMilestone={streak.nextMilestone} role="supporter" />
@@ -62,34 +91,6 @@ export default function SupporterDashboardPage() {
           </div>
           <MoodTrendChart data={history} rangeLabel={`${range} days`} />
         </section>
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-support-gradient/10 to-primary-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600" />
-      </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-support-gradient/10 to-primary-50 py-12 px-4">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <header className="bg-white border border-success-100 rounded-2xl shadow-sm p-8">
-          <h1 className="text-3xl font-bold text-gray-900">Thank you for showing up</h1>
-          <p className="mt-2 text-gray-600">
-            This dashboard will soon track everyone you’re supporting, share encouragement prompts, and surface resources just for loved ones and allies.
-          </p>
-        </header>
-
-        <MoodCravingLogger
-          user={user}
-          roleCopy={{
-            title: 'How are you holding up?',
-            subtitle: 'Supporters need care too. Log a quick check-in so we can surface resources that help you stay grounded.',
-            success: 'Thanks for taking a moment for yourself. We’ll use these check-ins to keep you supported as well.',
-          }}
-          showCravings={false}
-        />
 
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900">Who you’re supporting</h2>
