@@ -3,24 +3,18 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
-import LogStreakGraph from '@/components/tracking/LogStreakGraph'
 import MoodTrendChart from '@/components/tracking/MoodTrendChart'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
-import { fetchLogBasedStreak } from '@/lib/streaks'
 
 export default function SupporterDashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
-  const [streak, setStreak] = useState<{ current: number; nextMilestone: number; daysUntilMilestone: number; message: string } | null>(null)
   const [history, setHistory] = useState<MoodHistoryPoint[]>([])
   const [range, setRange] = useState<7 | 14 | 30>(7)
 
   useEffect(() => {
     getCurrentUser().then((profile) => {
       setUser(profile)
-      if (profile) {
-        fetchLogBasedStreak(profile).then(setStreak).catch(() => setStreak(null))
-      }
     })
   }, [])
 
@@ -58,12 +52,6 @@ export default function SupporterDashboardPage() {
           showCravings={false}
         />
 
-        {streak && (
-          <section className="bg-white border border-success-100 rounded-2xl shadow-sm p-6">
-            <LogStreakGraph current={streak.current} nextMilestone={streak.nextMilestone} role="supporter" />
-          </section>
-        )}
-
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
@@ -81,7 +69,7 @@ export default function SupporterDashboardPage() {
                   className={`px-3 py-1.5 rounded-full border text-sm transition-colors ${
                     range === value
                       ? 'border-success-500 bg-success-50 text-success-700'
-                      : 'border-gray-300 text-gray-600 hover:border-success-300'
+                      : 'border-gray-300 text-gray-600 hover-border-success-300'
                   }`}
                 >
                   Last {value} days
@@ -127,7 +115,7 @@ export default function SupporterDashboardPage() {
         </section>
 
         <footer className="text-center text-sm text-gray-500">
-          Placeholder dashboard &mdash; more features arriving in the next milestone.
+          Placeholder dashboar — more features arriving in the next milestone.
         </footer>
       </div>
     </div>
