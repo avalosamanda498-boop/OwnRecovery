@@ -50,11 +50,54 @@ export async function fetchRecoveryStreak(user: AuthUser): Promise<StreakSummary
     return streakSummary(0, { role: 'recovery' })
   }
 
-  const start = new Date(user.sobriety_start_date)
-  const now = new Date()
-  const days = Math.max(Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1, 0)
+  const baseStart = new Date(user.sobriety_start_date)
+  baseStart.setHours(0, 0, 0, 0)
 
-  return streakSummary(days, { role: 'recovery' })
+  const { data: relapseEntry, error } = await supabase
+    .from('mood_entries')
+    .select('created_at')
+    .eq('user_id', user.id)
+    .eq('craving_level', 'used_today')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (error) {
+    console.error('Error fetching relapse entry:', error)
+  }
+
+  let effectiveStart = new Date(baseStart)
+
+  if (relapseEntry) {
+    const relapseDate = new Date(relapseEntry.created_at)
+    relapseDate.setHours(0, 0, 0, 0)
+    if (relapseDate >= effectiveStart) {
+      effectiveStart = new Date(relapseDate)
+      effectiveStart.setDate(effectiveStart.getDate() + 1)
+    }
+  }
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const days =
+    effectiveStart > today
+      ? 0
+      : Math.max(Math.floor((today.getTime() - effectiveStart.getTime()) / (1000 * 60 * 60 * 24)) + 1, 0)
+
+  const summary = streakSummary(days, { role: 'recovery' })
+
+  if (relapseEntry) {
+    const relapseDate = new Date(relapseEntry.created_at)
+    relapseDate.setHours(0, 0, 0, 0)
+    if (relapseDate.getTime() === today.getTime()) {
+      summary.message = 'You checked in honestly today. Tomorrow can be Day 1.';
+    } else {
+      summary.message = `Your current streak restarted after ${relapseDate.toLocaleDateString()}. Keep showing up.`;
+    }
+  }
+
+  return summary
 }
 
 export async function fetchLogBasedStreak(user: AuthUser): Promise<StreakSummary> {
