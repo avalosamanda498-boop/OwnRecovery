@@ -15,6 +15,7 @@ interface MoodCravingLoggerProps {
   }
   showCravings?: boolean
   cravingTitle?: string
+  onBadgeAwarded?: (badges: BadgeRecord[]) => void
 }
 
 interface MoodEntrySummary {
@@ -29,6 +30,7 @@ export default function MoodCravingLogger({
   roleCopy,
   showCravings = true,
   cravingTitle = 'Craving check-in',
+  onBadgeAwarded,
 }: MoodCravingLoggerProps) {
   const [selectedMood, setSelectedMood] = useState<MoodOption | null>(null)
   const [selectedCraving, setSelectedCraving] = useState<CravingOption | null>(showCravings ? null : 'none')
@@ -72,6 +74,9 @@ export default function MoodCravingLogger({
 
       setSuccess(roleCopy.success)
       setEarnedBadges(result.newBadges)
+      if (result.newBadges.length > 0) {
+        onBadgeAwarded?.(result.newBadges)
+      }
       setLatestEntry(result.entry as MoodEntrySummary)
       setSelectedMood(null)
       setSelectedCraving(showCravings ? null : 'none')

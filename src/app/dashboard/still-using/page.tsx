@@ -14,6 +14,7 @@ export default function StillUsingDashboardPage() {
   const [streak, setStreak] = useState<{ current: number; nextMilestone: number; daysUntilMilestone: number; message: string } | null>(null)
   const [history, setHistory] = useState<MoodHistoryPoint[]>([])
   const [range, setRange] = useState<7 | 14 | 30>(7)
+  const [badgeRefreshKey, setBadgeRefreshKey] = useState(0)
 
   useEffect(() => {
     getCurrentUser().then((profile) => {
@@ -55,6 +56,7 @@ export default function StillUsingDashboardPage() {
             subtitle: 'Log how today feels—no pressure, no judgment. Honest check-ins help us pair the right tools when you need them.',
             success: 'Thanks for being honest with yourself today. Every check-in is a step toward feeling more in control.',
           }}
+          onBadgeAwarded={() => setBadgeRefreshKey((value) => value + 1)}
         />
 
         {streak && (
@@ -63,7 +65,7 @@ export default function StillUsingDashboardPage() {
           </section>
         )}
 
-        <RecentBadges emptyMessage="Your first badge will appear after your next few check-ins." />
+        <RecentBadges refreshKey={badgeRefreshKey} emptyMessage="Your first badge will appear after your next few check-ins." />
 
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">

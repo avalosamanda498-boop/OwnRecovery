@@ -12,6 +12,7 @@ export default function SupporterDashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [history, setHistory] = useState<MoodHistoryPoint[]>([])
   const [range, setRange] = useState<7 | 14 | 30>(7)
+  const [badgeRefreshKey, setBadgeRefreshKey] = useState(0)
 
   useEffect(() => {
     getCurrentUser().then((profile) => {
@@ -51,9 +52,14 @@ export default function SupporterDashboardPage() {
             success: 'Thanks for taking a moment for yourself. We’ll use these check-ins to keep you supported as well.',
           }}
           showCravings={false}
+          onBadgeAwarded={() => setBadgeRefreshKey((value) => value + 1)}
         />
 
-        <RecentBadges title="Support milestones" emptyMessage="Your first supporter badge appears after your next few reflections." />
+        <RecentBadges
+          refreshKey={badgeRefreshKey}
+          title="Support milestones"
+          emptyMessage="Your first supporter badge appears after your next few reflections."
+        />
 
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">

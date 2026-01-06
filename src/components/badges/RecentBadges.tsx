@@ -6,11 +6,13 @@ import { fetchRecentBadges, type BadgeRecord } from '@/lib/badges'
 interface RecentBadgesProps {
   title?: string
   emptyMessage?: string
+  refreshKey?: number
 }
 
 export function RecentBadges({
   title = 'Recent Celebrations',
   emptyMessage = 'Keep logging to unlock your first badge!',
+  refreshKey = 0,
 }: RecentBadgesProps) {
   const [badges, setBadges] = useState<BadgeRecord[]>([])
 
@@ -18,7 +20,7 @@ export function RecentBadges({
     fetchRecentBadges(3)
       .then((data) => setBadges(data))
       .catch(() => setBadges([]))
-  }, [])
+  }, [refreshKey])
 
   return (
     <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
