@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { BadgeRecord } from '@/lib/badges'
 
@@ -10,11 +10,36 @@ interface BadgeCelebrationToastProps {
   duration?: number
 }
 
-const confettiPieces = Array.from({ length: 28 })
 const CONFETTI_COLORS = ['#f97316', '#facc15', '#38bdf8', '#34d399', '#a855f7', '#fb7185']
 const CONFETTI_SHAPES: Array<'rounded-sm' | 'rounded-full' | 'rotate-45'> = ['rounded-sm', 'rounded-full', 'rotate-45']
 
+interface ConfettiPiece {
+  left: number
+  delay: number
+  duration: number
+  color: string
+  shape: string
+  rotate: number
+  drift: number
+}
+
 export function BadgeCelebrationToast({ badges, onClose, duration = 6000 }: BadgeCelebrationToastProps) {
+  const shouldShowConfetti = badges.some((badge) => badge.badge_type !== 'bravery_log')
+
+  const confettiPieces = useMemo<ConfettiPiece[]>(() => {
+    if (!shouldShowConfetti) return []
+    return Array.from({ length: 42 }).map((_, idx) => {
+      const left = Math.random() * 100
+      const delay = Math.random() * 0.7
+      const duration = 2.4 + Math.random()
+      const color = CONFETTI_COLORS[idx % CONFETTI_COLORS.length]
+      const shape = CONFETTI_SHAPES[idx % CONFETTI_SHAPES.length] || 'rounded-sm'
+      const rotate = Math.random() * 180
+      const drift = Math.random() * 40 - 20
+      return { left, delay, duration, color, shape, rotate, drift }
+    })
+  }, [shouldShowConfetti])
+
   useEffect(() => {
     if (!onClose) return
 
@@ -89,48 +114,36 @@ export function BadgeCelebrationToast({ badges, onClose, duration = 6000 }: Badg
             )}
           </div>
 
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            {confettiPieces.map((_, idx) => (
-              <motion.span
-                key={idx}
-                initial={{
-                  opacity: 0,
-                  scale: 0.6,
-                  x: 0,
-                  y: 0,
-                  rotate: Math.random() * 180,
-                }}
-                animate={{
-                  opacity: [0, 1, 1, 0],
-                  x: [
-                    0,
-                    (Math.random() > 0.5 ? 1 : -1) * (80 + Math.random() * 120),
-                  ],
-                  y: [0, 120 + Math.random() * 60],
-                  scale: [0.6, 1.2, 1],
-                  rotate: [
-                    Math.random() * 180,
-                    Math.random() * 360,
-                    Math.random() * 360,
-                  ],
-                }}
-                transition={{
-                  duration: 2 + Math.random(),
-                  ease: 'easeOut',
-                  repeat: Infinity,
-                  repeatDelay: 2 + Math.random() * 0.6,
-                  delay: Math.random() * 0.5,
-                }}
-                style={{
-                  backgroundColor: CONFETTI_COLORS[idx % CONFETTI_COLORS.length],
-                  boxShadow: `0 0 8px ${CONFETTI_COLORS[idx % CONFETTI_COLORS.length]}40`,
-                }}
-                className={`absolute left-1/2 top-1/2 h-2 w-3 ${
-                  CONFETTI_SHAPES[idx % CONFETTI_SHAPES.length] || 'rounded-sm'
-                }`}
-              />
-            ))}
-          </div>
+          {shouldShowConfetti && (
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+              {confettiPieces.map((piece, idx) => (
+                <motion.span
+                  key={`${piece.left}-${idx}`}
+                  initial={{ opacity: 0, y: -160, x: piece.left - 50, rotate: piece.rotate, scale: 0.8 }}
+                  animate={{
+                    opacity: [0, 1, 1, 0],
+                    y: [ -160, 120, 220 ],
+                    x: [piece.left - 50, piece.left - 50 + piece.drift, piece.left - 50 + piece.drift * 1.4],
+                    rotate: [piece.rotate, piece.rotate + 90, piece.rotate + 160],
+                    scale: [0.8, 1, 1],
+                  }}
+                  transition={{
+                    duration: piece.duration,
+                    delay: piece.delay,
+                    repeat: Infinity,
+                    repeatDelay: 2.2,
+                    ease: 'easeOut',
+                  }}
+                  style={{
+                    left: `${piece.left}%`,
+                    backgroundColor: piece.color,
+                    boxShadow: `0 0 8px ${piece.color}40`,
+                  }}
+                  className={`absolute top-0 h-2 w-3 ${piece.shape}`}
+                />
+              ))}
+            </div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>
