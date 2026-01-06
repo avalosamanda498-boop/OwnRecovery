@@ -9,6 +9,7 @@ import { RecentBadges } from '@/components/badges/RecentBadges'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
 import { fetchRecoveryStreak } from '@/lib/streaks'
+import type { BadgeRecord } from '@/lib/badges'
 
 export default function RecoveryDashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
@@ -16,6 +17,7 @@ export default function RecoveryDashboardPage() {
   const [history, setHistory] = useState<MoodHistoryPoint[]>([])
   const [range, setRange] = useState<7 | 14 | 30>(7)
   const [badgeRefreshKey, setBadgeRefreshKey] = useState(0)
+  const [latestBadges, setLatestBadges] = useState<BadgeRecord[]>([])
 
   useEffect(() => {
     getCurrentUser().then((profile) => {
@@ -57,7 +59,10 @@ export default function RecoveryDashboardPage() {
             subtitle: 'Tracking each moment helps you spot trends, celebrate wins, and reach out when cravings feel heavy.',
             success: 'Nice work staying connected to your journey. Keep showing up—you’re doing this!',
           }}
-          onBadgeAwarded={() => setBadgeRefreshKey((value) => value + 1)}
+          onBadgeAwarded={(badges) => {
+            setBadgeRefreshKey((value) => value + 1)
+            setLatestBadges(badges)
+          }}
         />
 
         {streak && (
@@ -66,7 +71,7 @@ export default function RecoveryDashboardPage() {
           </section>
         )}
 
-        <RecentBadges refreshKey={badgeRefreshKey} />
+        <RecentBadges refreshKey={badgeRefreshKey} latestBadges={latestBadges} />
 
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">

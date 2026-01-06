@@ -7,12 +7,14 @@ import MoodTrendChart from '@/components/tracking/MoodTrendChart'
 import { RecentBadges } from '@/components/badges/RecentBadges'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
+import type { BadgeRecord } from '@/lib/badges'
 
 export default function SupporterDashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [history, setHistory] = useState<MoodHistoryPoint[]>([])
   const [range, setRange] = useState<7 | 14 | 30>(7)
   const [badgeRefreshKey, setBadgeRefreshKey] = useState(0)
+  const [latestBadges, setLatestBadges] = useState<BadgeRecord[]>([])
 
   useEffect(() => {
     getCurrentUser().then((profile) => {
@@ -52,11 +54,15 @@ export default function SupporterDashboardPage() {
             success: 'Thanks for taking a moment for yourself. We’ll use these check-ins to keep you supported as well.',
           }}
           showCravings={false}
-          onBadgeAwarded={() => setBadgeRefreshKey((value) => value + 1)}
+          onBadgeAwarded={(badges) => {
+            setBadgeRefreshKey((value) => value + 1)
+            setLatestBadges(badges)
+          }}
         />
 
         <RecentBadges
           refreshKey={badgeRefreshKey}
+          latestBadges={latestBadges}
           title="Support milestones"
           emptyMessage="Your first supporter badge appears after your next few reflections."
         />

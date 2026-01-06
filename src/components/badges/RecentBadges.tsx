@@ -7,12 +7,14 @@ interface RecentBadgesProps {
   title?: string
   emptyMessage?: string
   refreshKey?: number
+  latestBadges?: BadgeRecord[]
 }
 
 export function RecentBadges({
   title = 'Recent Celebrations',
   emptyMessage = 'Keep logging to unlock your first badge!',
   refreshKey = 0,
+  latestBadges = [],
 }: RecentBadgesProps) {
   const [badges, setBadges] = useState<BadgeRecord[]>([])
 
@@ -21,6 +23,20 @@ export function RecentBadges({
       .then((data) => setBadges(data))
       .catch(() => setBadges([]))
   }, [refreshKey])
+
+  useEffect(() => {
+    if (!latestBadges.length) return
+
+    setBadges((prev) => {
+      const merged = new Map<string, BadgeRecord>()
+      for (const badge of [...latestBadges, ...prev]) {
+        merged.set(badge.id, badge)
+      }
+      return Array.from(merged.values()).sort(
+        (a, b) => new Date(b.earned_at).getTime() - new Date(a.earned_at).getTime()
+      )
+    })
+  }, [latestBadges])
 
   return (
     <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
