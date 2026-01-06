@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createMoodEntry, fetchLatestMoodEntry, MOOD_CHOICES, CRAVING_CHOICES, MoodOption, CravingOption } from '@/lib/moodEntries'
 import type { BadgeRecord } from '@/lib/badges'
+import { BadgeCelebrationToast } from '@/components/badges/BadgeCelebrationToast'
 import { AuthUser } from '@/lib/auth'
 
 interface MoodCravingLoggerProps {
@@ -156,22 +157,7 @@ export default function MoodCravingLogger({
           </div>
         )}
 
-        {earnedBadges.length > 0 && (
-          <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg text-sm space-y-2">
-            <p className="font-medium">New badge unlocked!</p>
-            <div className="flex flex-wrap gap-2">
-              {earnedBadges.map((badge) => (
-                <span
-                  key={badge.id}
-                  className="inline-flex items-center gap-2 rounded-full bg-white border border-amber-300 px-3 py-1 text-sm shadow-sm"
-                >
-                  <span className="text-base">{badge.icon ?? '🌟'}</span>
-                  <span className="font-medium text-gray-800">{badge.badge_name}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+        <BadgeCelebrationToast badges={earnedBadges} onClose={() => setEarnedBadges([])} />
 
         <div className="flex items-center justify-end">
           <button
