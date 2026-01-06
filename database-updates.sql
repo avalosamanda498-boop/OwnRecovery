@@ -111,6 +111,11 @@ ALTER TABLE public.badges
 
 DROP TYPE IF EXISTS public.badge_type;
 
+-- Bring older schemas up to date with the current badge shape
+ALTER TABLE public.badges
+  ADD COLUMN IF NOT EXISTS icon TEXT,
+  ADD COLUMN IF NOT EXISTS metadata JSONB;
+
 CREATE UNIQUE INDEX IF NOT EXISTS badges_user_type_unique ON public.badges(user_id, badge_type);
 CREATE INDEX IF NOT EXISTS idx_badges_user_id ON public.badges(user_id);
 
