@@ -76,14 +76,59 @@ CREATE INDEX IF NOT EXISTS idx_mood_entries_created_at ON public.mood_entries(cr
 
 ALTER TABLE public.mood_entries ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Users can insert their own mood entries" ON public.mood_entries
+DROP POLICY IF EXISTS "Users can insert their own mood entries" ON public.mood_entries;
+DROP POLICY IF EXISTS "Users can view their own mood entries" ON public.mood_entries;
+DROP POLICY IF EXISTS "Users can update their own mood entries" ON public.mood_entries;
+DROP POLICY IF EXISTS "Users can delete their own mood entries" ON public.mood_entries;
+
+CREATE POLICY "Users can insert their own mood entries" ON public.mood_entries
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can view their own mood entries" ON public.mood_entries
+CREATE POLICY "Users can view their own mood entries" ON public.mood_entries
   FOR SELECT USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can update their own mood entries" ON public.mood_entries
+CREATE POLICY "Users can update their own mood entries" ON public.mood_entries
   FOR UPDATE USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can delete their own mood entries" ON public.mood_entries
+CREATE POLICY "Users can delete their own mood entries" ON public.mood_entries
   FOR DELETE USING (auth.uid() = user_id);
+
+-- Phase 2 badges system
+CREATE TABLE IF NOT EXISTS public.badges (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  badge_type TEXT NOT NULL,
+  badge_name TEXT NOT NULL,
+  description TEXT,
+  icon TEXT,
+  metadata JSONB,
+  earned_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Ensure legacy enum-based schemas convert to flexible text-based badge types
+ALTER TABLE public.badges
+  ALTER COLUMN badge_type TYPE TEXT USING badge_type::TEXT;
+
+DROP TYPE IF EXISTS public.badge_type;
+
+CREATE UNIQUE INDEX IF NOT EXISTS badges_user_type_unique ON public.badges(user_id, badge_type);
+CREATE INDEX IF NOT EXISTS idx_badges_user_id ON public.badges(user_id);
+
+ALTER TABLE public.badges ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view own badges" ON public.badges;
+DROP POLICY IF EXISTS "Users can insert own badges" ON public.badges;
+DROP POLICY IF EXISTS "Users can delete own badges" ON public.badges;
+DROP POLICY IF EXISTS "Users can update own badges" ON public.badges;
+
+CREATE POLICY "Users can view own badges" ON public.badges
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own badges" ON public.badges
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own badges" ON public.badges
+  FOR DELETE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own badges" ON public.badges
+  FOR UPDATE USING (auth.uid() = user_id);

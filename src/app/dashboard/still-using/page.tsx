@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
 import LogStreakGraph from '@/components/tracking/LogStreakGraph'
 import MoodTrendChart from '@/components/tracking/MoodTrendChart'
+import { RecentBadges } from '@/components/badges/RecentBadges'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
 import { fetchLogBasedStreak } from '@/lib/streaks'
@@ -61,6 +62,8 @@ export default function StillUsingDashboardPage() {
             <LogStreakGraph current={streak.current} nextMilestone={streak.nextMilestone} role="still_using" />
           </section>
         )}
+
+        <RecentBadges emptyMessage="Your first badge will appear after your next few check-ins." />
 
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">

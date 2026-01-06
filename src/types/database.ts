@@ -46,7 +46,7 @@ export interface MoodEntry {
 export interface Badge {
   id: string
   user_id: string
-  badge_type: 'daily_update' | 'sobriety_milestone' | 'resilience' | 'support' | 'bravery'
+  badge_type: 'first_log' | 'streak_3' | 'streak_7' | 'streak_14' | 'streak_30' | 'bravery_log'
   badge_name: string
   description: string
   earned_at: string

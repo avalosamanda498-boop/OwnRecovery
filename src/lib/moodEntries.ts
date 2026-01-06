@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { checkAndAwardBadges, type BadgeRecord } from './badges'
 
 export type MoodOption =
   | 'happy'
@@ -29,6 +30,17 @@ export const CRAVING_CHOICES: Array<{ id: CravingOption; label: string }> = [
   { id: 'used_today', label: 'I used today' },
 ]
 
+export interface CreateMoodEntryResult {
+  entry: {
+    id: string
+    mood: MoodOption
+    craving_level: CravingOption
+    note: string | null
+    created_at: string
+  }
+  newBadges: BadgeRecord[]
+}
+
 export async function createMoodEntry({
   mood,
   craving,
@@ -37,7 +49,7 @@ export async function createMoodEntry({
   mood: MoodOption
   craving: CravingOption
   note?: string
-}) {
+}): Promise<CreateMoodEntryResult> {
   const {
     data: { user },
     error: authError,
@@ -58,11 +70,16 @@ export async function createMoodEntry({
     .select('id, mood, craving_level, note, created_at')
     .single()
 
-  if (error) {
-    throw error
+  if (error || !data) {
+    throw error || new Error('No mood entry returned after insert.')
   }
 
-  return data
+  const newBadges = await checkAndAwardBadges(user.id, craving)
+
+  return {
+    entry: data as CreateMoodEntryResult['entry'],
+    newBadges,
+  }
 }
 
 export async function fetchLatestMoodEntry() {

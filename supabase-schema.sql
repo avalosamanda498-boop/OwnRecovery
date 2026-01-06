@@ -5,7 +5,6 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TYPE user_role AS ENUM ('recovery', 'still_using', 'supporter');
 CREATE TYPE mood_type AS ENUM ('happy', 'neutral', 'sad', 'anxious', 'angry', 'tired', 'energized');
 CREATE TYPE craving_level AS ENUM ('none', 'mild', 'strong', 'at_risk', 'used_today');
-CREATE TYPE badge_type AS ENUM ('daily_update', 'sobriety_milestone', 'resilience', 'support', 'bravery');
 CREATE TYPE resource_type AS ENUM ('article', 'video', 'worksheet', 'meditation', 'breathing_exercise');
 CREATE TYPE connection_status AS ENUM ('pending', 'accepted', 'declined');
 CREATE TYPE interaction_type AS ENUM ('check_in', 'recommendation', 'crisis_detection');
@@ -50,7 +49,7 @@ CREATE TABLE mood_entries (
 CREATE TABLE badges (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    badge_type badge_type NOT NULL,
+    badge_type TEXT NOT NULL,
     badge_name VARCHAR(100) NOT NULL,
     description TEXT NOT NULL,
     earned_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

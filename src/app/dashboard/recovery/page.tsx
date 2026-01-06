@@ -5,6 +5,7 @@ import Link from 'next/link'
 import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
 import RecoveryStreakRadial from '@/components/tracking/RecoveryStreakRadial'
 import MoodTrendChart from '@/components/tracking/MoodTrendChart'
+import { RecentBadges } from '@/components/badges/RecentBadges'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
 import { fetchRecoveryStreak } from '@/lib/streaks'
@@ -62,6 +63,8 @@ export default function RecoveryDashboardPage() {
             <RecoveryStreakRadial streak={streak} />
           </section>
         )}
+
+        <RecentBadges />
 
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
