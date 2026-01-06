@@ -10,9 +10,9 @@ interface BadgeCelebrationToastProps {
   duration?: number
 }
 
-const confettiPieces = Array.from({ length: 24 })
+const confettiPieces = Array.from({ length: 28 })
 const CONFETTI_COLORS = ['#f97316', '#facc15', '#38bdf8', '#34d399', '#a855f7', '#fb7185']
-const CONFETTI_SHAPES: Array<'rounded-sm' | 'rounded-full'> = ['rounded-sm', 'rounded-full']
+const CONFETTI_SHAPES: Array<'rounded-sm' | 'rounded-full' | 'rotate-45'> = ['rounded-sm', 'rounded-full', 'rotate-45']
 
 export function BadgeCelebrationToast({ badges, onClose, duration = 6000 }: BadgeCelebrationToastProps) {
   useEffect(() => {
@@ -93,24 +93,41 @@ export function BadgeCelebrationToast({ badges, onClose, duration = 6000 }: Badg
             {confettiPieces.map((_, idx) => (
               <motion.span
                 key={idx}
-                initial={{ opacity: 0, y: -20, rotate: 0 }}
+                initial={{
+                  opacity: 0,
+                  scale: 0.6,
+                  x: 0,
+                  y: 0,
+                  rotate: Math.random() * 180,
+                }}
                 animate={{
                   opacity: [0, 1, 1, 0],
-                  y: [Math.random() * 10, 120 + Math.random() * 20],
-                  x: [Math.random() * 40 - 20, Math.random() * 160 - 80],
-                  rotate: [0, Math.random() * 120 - 60],
+                  x: [
+                    0,
+                    (Math.random() > 0.5 ? 1 : -1) * (80 + Math.random() * 120),
+                  ],
+                  y: [0, 120 + Math.random() * 60],
+                  scale: [0.6, 1.2, 1],
+                  rotate: [
+                    Math.random() * 180,
+                    Math.random() * 360,
+                    Math.random() * 360,
+                  ],
                 }}
                 transition={{
-                  duration: 1.8 + Math.random(),
+                  duration: 2 + Math.random(),
                   ease: 'easeOut',
                   repeat: Infinity,
-                  delay: Math.random() * 0.8,
+                  repeatDelay: 2 + Math.random() * 0.6,
+                  delay: Math.random() * 0.5,
                 }}
                 style={{
                   backgroundColor: CONFETTI_COLORS[idx % CONFETTI_COLORS.length],
                   boxShadow: `0 0 8px ${CONFETTI_COLORS[idx % CONFETTI_COLORS.length]}40`,
                 }}
-                className={`absolute left-1/2 top-0 ${CONFETTI_SHAPES[idx % CONFETTI_SHAPES.length]} h-2 w-3`}
+                className={`absolute left-1/2 top-1/2 h-2 w-3 ${
+                  CONFETTI_SHAPES[idx % CONFETTI_SHAPES.length] || 'rounded-sm'
+                }`}
               />
             ))}
           </div>
