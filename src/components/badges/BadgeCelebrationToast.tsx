@@ -10,7 +10,9 @@ interface BadgeCelebrationToastProps {
   duration?: number
 }
 
-const confettiPieces = Array.from({ length: 18 })
+const confettiPieces = Array.from({ length: 24 })
+const CONFETTI_COLORS = ['#f97316', '#facc15', '#38bdf8', '#34d399', '#a855f7', '#fb7185']
+const CONFETTI_SHAPES: Array<'rounded-sm' | 'rounded-full'> = ['rounded-sm', 'rounded-full']
 
 export function BadgeCelebrationToast({ badges, onClose, duration = 6000 }: BadgeCelebrationToastProps) {
   useEffect(() => {
@@ -104,7 +106,11 @@ export function BadgeCelebrationToast({ badges, onClose, duration = 6000 }: Badg
                   repeat: Infinity,
                   delay: Math.random() * 0.8,
                 }}
-                className="absolute left-1/2 top-0 h-2 w-3 rounded-sm bg-amber-400/80 shadow-sm"
+                style={{
+                  backgroundColor: CONFETTI_COLORS[idx % CONFETTI_COLORS.length],
+                  boxShadow: `0 0 8px ${CONFETTI_COLORS[idx % CONFETTI_COLORS.length]}40`,
+                }}
+                className={`absolute left-1/2 top-0 ${CONFETTI_SHAPES[idx % CONFETTI_SHAPES.length]} h-2 w-3`}
               />
             ))}
           </div>
