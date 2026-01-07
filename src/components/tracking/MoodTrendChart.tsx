@@ -129,78 +129,80 @@ export default function MoodTrendChart({ data, rangeLabel }: MoodTrendChartProps
   }
 
   return (
-    <div className="w-full h-64">
-      <ResponsiveContainer>
-        <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 10 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 12 }} />
-          <YAxis
-            tick={{ fill: '#6b7280', fontSize: 12 }}
-            domain={[0, 5]}
-            ticks={[1, 2, 3, 4, 5]}
-            allowDecimals={false}
-          />
-          <Tooltip
-            cursor={{ fill: 'rgba(14, 165, 233, 0.08)' }}
-            formatter={(value: number, name) => {
-              if (name === 'Mood') {
-                return [moodScoreLabel(value), 'Mood']
-              }
-              if (name === 'Stress') {
-                return [value.toFixed(1), 'Stress (higher = heavier)']
-              }
-              if (name === 'Sleep') {
-                return [value.toFixed(1), 'Sleep (higher = more restored)']
-              }
-              return [value.toFixed(1), 'Cravings']
-            }}
-          />
-          <Area
-            type="monotone"
-            dataKey="cravingScore"
-            name="Cravings"
-            fill="#fde68a"
-            stroke="#f59e0b"
-            strokeWidth={2}
-            fillOpacity={0.35}
-          />
-          <Line
-            type="monotone"
-            dataKey="moodScore"
-            name="Mood"
-            stroke="#0ea5e9"
-            strokeWidth={3}
-            dot={{ r: 3 }}
-            activeDot={{ r: 6 }}
-          />
-          <Line
-            type="monotone"
-            dataKey="stressScore"
-            name="Stress"
-            stroke="#ef4444"
-            strokeDasharray="4 4"
-            strokeWidth={2}
-            dot={{ r: 2 }}
-            connectNulls
-          />
-          <Line
-            type="monotone"
-            dataKey="sleepScore"
-            name="Sleep"
-            stroke="#22c55e"
-            strokeWidth={2}
-            dot={{ r: 2 }}
-            connectNulls
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
-    </div>
-    {trendInsight && (
-      <div className="mt-3 rounded-2xl border border-primary-100 bg-primary-50/60 p-4 text-sm text-primary-800">
-        <p className="font-medium text-primary-900">Today’s interpretation</p>
-        <p className="mt-1">{trendInsight}</p>
+    <div className="space-y-3">
+      <div className="w-full h-64">
+        <ResponsiveContainer>
+          <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 10 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 12 }} />
+            <YAxis
+              tick={{ fill: '#6b7280', fontSize: 12 }}
+              domain={[0, 5]}
+              ticks={[1, 2, 3, 4, 5]}
+              allowDecimals={false}
+            />
+            <Tooltip
+              cursor={{ fill: 'rgba(14, 165, 233, 0.08)' }}
+              formatter={(value: number, name) => {
+                if (name === 'Mood') {
+                  return [moodScoreLabel(value), 'Mood']
+                }
+                if (name === 'Stress') {
+                  return [value.toFixed(1), 'Stress (higher = heavier)']
+                }
+                if (name === 'Sleep') {
+                  return [value.toFixed(1), 'Sleep (higher = more restored)']
+                }
+                return [value.toFixed(1), 'Cravings']
+              }}
+            />
+            <Area
+              type="monotone"
+              dataKey="cravingScore"
+              name="Cravings"
+              fill="#fde68a"
+              stroke="#f59e0b"
+              strokeWidth={2}
+              fillOpacity={0.35}
+            />
+            <Line
+              type="monotone"
+              dataKey="moodScore"
+              name="Mood"
+              stroke="#0ea5e9"
+              strokeWidth={3}
+              dot={{ r: 3 }}
+              activeDot={{ r: 6 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="stressScore"
+              name="Stress"
+              stroke="#ef4444"
+              strokeDasharray="4 4"
+              strokeWidth={2}
+              dot={{ r: 2 }}
+              connectNulls
+            />
+            <Line
+              type="monotone"
+              dataKey="sleepScore"
+              name="Sleep"
+              stroke="#22c55e"
+              strokeWidth={2}
+              dot={{ r: 2 }}
+              connectNulls
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
       </div>
-    )}
+      {trendInsight && (
+        <div className="rounded-2xl border border-primary-100 bg-primary-50/60 p-4 text-sm text-primary-800">
+          <p className="font-medium text-primary-900">Today’s interpretation</p>
+          <p className="mt-1">{trendInsight}</p>
+        </div>
+      )}
+    </div>
   )
 }
 
