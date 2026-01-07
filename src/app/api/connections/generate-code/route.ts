@@ -1,24 +1,41 @@
 'use server'
 
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { computeInviteExpiry, generateSupportInviteCode, isInviteExpired } from '@/lib/inviteCodes'
+import { supabaseAdmin } from '@/lib/supabase'
 
-export async function POST() {
-  const cookieStore = cookies()
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+function extractToken(request: Request): string | null {
+  const header = request.headers.get('authorization') || request.headers.get('Authorization')
+  if (!header) return null
+  const [scheme, token] = header.split(' ')
+  if (!scheme || scheme.toLowerCase() !== 'bearer' || !token) return null
+  return token
+}
+
+export async function POST(request: Request) {
+  const token = extractToken(request)
+
+  if (!token) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: 'Service role not available on server. Ensure SUPABASE_SERVICE_ROLE_KEY is configured.' },
+      { status: 500 }
+    )
+  }
 
   const {
     data: { user },
     error: authError,
-  } = await supabase.auth.getUser()
+  } = await supabaseAdmin.auth.getUser(token)
 
   if (authError || !user) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile, error: profileError } = await supabaseAdmin
     .from('users')
     .select('role, pending_support_invite_code, pending_support_invite_expires_at')
     .eq('id', user.id)
@@ -45,7 +62,7 @@ export async function POST() {
   const inviteCode = shouldReuseExistingCode ? existingCode! : generateSupportInviteCode()
   const expiresAt = shouldReuseExistingCode ? existingExpiry! : computeInviteExpiry()
 
-  const { error: updateError } = await supabase
+  const { error: updateError } = await supabaseAdmin
     .from('users')
     .update({
       pending_support_invite_code: inviteCode,

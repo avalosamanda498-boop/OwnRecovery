@@ -1,8 +1,6 @@
 'use server'
 
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { supabaseAdmin } from '@/lib/supabase'
 
 type RawConnection = {
@@ -15,20 +13,38 @@ type RawConnection = {
   relationship_note: string | null
 }
 
-export async function GET() {
-  const cookieStore = cookies()
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+function extractToken(request: Request): string | null {
+  const header = request.headers.get('authorization') || request.headers.get('Authorization')
+  if (!header) return null
+  const [scheme, token] = header.split(' ')
+  if (!scheme || scheme.toLowerCase() !== 'bearer' || !token) return null
+  return token
+}
+
+export async function GET(request: Request) {
+  const token = extractToken(request)
+
+  if (!token) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: 'Service role not available on server. Ensure SUPABASE_SERVICE_ROLE_KEY is configured.' },
+      { status: 500 }
+    )
+  }
 
   const {
     data: { user },
     error: authError,
-  } = await supabase.auth.getUser()
+  } = await supabaseAdmin.auth.getUser(token)
 
   if (authError || !user) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile, error: profileError } = await supabaseAdmin
     .from('users')
     .select('role, pending_support_invite_code, pending_support_invite_expires_at')
     .eq('id', user.id)
@@ -40,17 +56,24 @@ export async function GET() {
   }
 
   const [asRecoveryResult, asSupporterResult] = await Promise.all([
-    supabase
+    supabaseAdmin
       .from('user_connections')
       .select('id, supporter_id, recovery_user_id, status, created_at, accepted_at, relationship_note')
       .eq('recovery_user_id', user.id)
       .order('created_at', { ascending: false }),
-    supabase
+    supabaseAdmin
       .from('user_connections')
       .select('id, supporter_id, recovery_user_id, status, created_at, accepted_at, relationship_note')
       .eq('supporter_id', user.id)
       .order('created_at', { ascending: false }),
   ])
+
+  if (asRecoveryResult.error) {
+    console.error('Error fetching recovery connections', asRecoveryResult.error)
+  }
+  if (asSupporterResult.error) {
+    console.error('Error fetching supporter connections', asSupporterResult.error)
+  }
 
   const asRecoveryConnections = (asRecoveryResult.data ?? []) as RawConnection[]
   const asSupporterConnections = (asSupporterResult.data ?? []) as RawConnection[]
@@ -72,7 +95,7 @@ export async function GET() {
     }
   >()
 
-  if (partnerIds.size > 0 && supabaseAdmin) {
+  if (partnerIds.size > 0) {
     const { data: partnerRows, error: partnerError } = await supabaseAdmin
       .from('users')
       .select('id, full_name, prefers_anonymous')

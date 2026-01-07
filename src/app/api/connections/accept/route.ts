@@ -1,8 +1,6 @@
 'use server'
 
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import {
   normalizeInviteCode,
   SUPPORT_INVITE_LENGTH,
@@ -10,35 +8,19 @@ import {
 } from '@/lib/inviteCodes'
 import { supabaseAdmin } from '@/lib/supabase'
 
+function extractToken(request: Request): string | null {
+  const header = request.headers.get('authorization') || request.headers.get('Authorization')
+  if (!header) return null
+  const [scheme, token] = header.split(' ')
+  if (!scheme || scheme.toLowerCase() !== 'bearer' || !token) return null
+  return token
+}
+
 export async function POST(request: Request) {
-  const cookieStore = cookies()
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+  const token = extractToken(request)
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-
-  if (authError || !user) {
+  if (!token) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-  }
-
-  const { data: supporterProfile, error: supporterProfileError } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  if (supporterProfileError) {
-    console.error('Error fetching supporter profile', supporterProfileError)
-    return NextResponse.json({ error: 'Unable to load profile' }, { status: 500 })
-  }
-
-  if (supporterProfile?.role !== 'supporter') {
-    return NextResponse.json(
-      { error: 'Only supporters can accept an invite code.' },
-      { status: 403 }
-    )
   }
 
   if (!supabaseAdmin) {
@@ -46,6 +28,15 @@ export async function POST(request: Request) {
       { error: 'Service role not available. Please confirm server configuration.' },
       { status: 500 }
     )
+  }
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabaseAdmin.auth.getUser(token)
+
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
   let body: { code?: string; relationship_note?: string } = {}
@@ -62,6 +53,24 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: 'Please provide the 6-character invite code from your recovery partner.' },
       { status: 400 }
+    )
+  }
+
+  const { data: supporterProfile, error: supporterProfileError } = await supabaseAdmin
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  if (supporterProfileError) {
+    console.error('Error fetching supporter profile', supporterProfileError)
+    return NextResponse.json({ error: 'Unable to load profile' }, { status: 500 })
+  }
+
+  if (supporterProfile?.role !== 'supporter') {
+    return NextResponse.json(
+      { error: 'Only supporters can accept an invite code.' },
+      { status: 403 }
     )
   }
 
@@ -99,7 +108,7 @@ export async function POST(request: Request) {
       ? `${sanitizedNote.slice(0, 157)}…`
       : sanitizedNote
 
-  const { data: existingConnection, error: existingError } = await supabase
+  const { data: existingConnection, error: existingError } = await supabaseAdmin
     .from('user_connections')
     .select('id, status')
     .eq('supporter_id', user.id)
@@ -116,7 +125,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true })
     }
 
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from('user_connections')
       .update({
         status: 'accepted',
@@ -133,7 +142,7 @@ export async function POST(request: Request) {
       )
     }
   } else {
-    const { error: insertError } = await supabase.from('user_connections').insert({
+    const { error: insertError } = await supabaseAdmin.from('user_connections').insert({
       supporter_id: user.id,
       recovery_user_id: recoveryUser.id,
       status: 'accepted',

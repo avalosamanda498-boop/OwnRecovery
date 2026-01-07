@@ -32,12 +32,29 @@ async function handleResponse<T>(response: Response): Promise<T> {
   throw new Error(message?.error ?? 'We could not complete that request right now.')
 }
 
+import { supabase } from '@/lib/supabase'
+
+async function authedFetch(input: RequestInfo | URL, init: RequestInit = {}) {
+  const { data: sessionData } = await supabase.auth.getSession()
+  const token = sessionData.session?.access_token
+
+  const headers = new Headers(init.headers ?? {})
+  headers.set('Content-Type', 'application/json')
+
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`)
+  }
+
+  return fetch(input, {
+    ...init,
+    headers,
+    credentials: 'include',
+  })
+}
+
 export async function fetchConnectionsSummary(): Promise<ConnectionListResponse> {
-  const response = await fetch('/api/connections/list', {
+  const response = await authedFetch('/api/connections/list', {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     cache: 'no-store',
   })
 
@@ -45,22 +62,16 @@ export async function fetchConnectionsSummary(): Promise<ConnectionListResponse>
 }
 
 export async function generateSupportInvite(): Promise<{ code: string; expires_at: string }> {
-  const response = await fetch('/api/connections/generate-code', {
+  const response = await authedFetch('/api/connections/generate-code', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
   })
 
   return handleResponse<{ code: string; expires_at: string }>(response)
 }
 
 export async function acceptSupportInvite(input: { code: string; relationship_note?: string }): Promise<void> {
-  const response = await fetch('/api/connections/accept', {
+  const response = await authedFetch('/api/connections/accept', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(input),
   })
 
@@ -68,11 +79,8 @@ export async function acceptSupportInvite(input: { code: string; relationship_no
 }
 
 export async function removeConnection(connectionId: string): Promise<void> {
-  const response = await fetch(`/api/connections/${connectionId}`, {
+  const response = await authedFetch(`/api/connections/${connectionId}`, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
   })
 
   await handleResponse<{ success: boolean }>(response)
