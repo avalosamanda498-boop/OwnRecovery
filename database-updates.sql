@@ -62,6 +62,14 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS user_type TEXT DEFAULT 'regular';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_mood_log_at DATE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_support_action_at DATE;
 CREATE INDEX IF NOT EXISTS idx_users_pending_support_invite_code ON users(pending_support_invite_code);
+ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS privacy_settings JSONB DEFAULT '{
+    "show_mood_trends": true,
+    "show_craving_levels": true,
+    "show_notes": false,
+    "show_streak": true,
+    "show_badges": true
+  }'::jsonb;
 
 -- Phase 2 mood & craving tracking
 CREATE TABLE IF NOT EXISTS public.mood_entries (

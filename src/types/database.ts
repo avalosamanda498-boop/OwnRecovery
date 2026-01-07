@@ -37,6 +37,7 @@ export interface User {
   }
   prefers_anonymous?: boolean
   is_admin?: boolean
+  privacy_settings?: PrivacySettings
 }
 
 export interface MoodEntry {
@@ -80,6 +81,14 @@ export interface UserConnection {
   created_at: string
   accepted_at?: string
   relationship_note?: string
+}
+
+export interface PrivacySettings {
+  show_mood_trends: boolean
+  show_craving_levels: boolean
+  show_notes: boolean
+  show_streak: boolean
+  show_badges: boolean
 }
 
 export interface Resource {

@@ -3,12 +3,20 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { getCurrentUser, updateUserProfile, type AuthUser } from '@/lib/auth'
+import type { PrivacySettings } from '@/types/database'
 
 type AsyncState = 'idle' | 'saving' | 'success' | 'error'
 
 export default function SettingsPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [prefersAnonymous, setPrefersAnonymous] = useState(false)
+  const [privacySettings, setPrivacySettings] = useState<PrivacySettings>({
+    show_mood_trends: true,
+    show_craving_levels: true,
+    show_notes: false,
+    show_streak: true,
+    show_badges: true,
+  })
   const [status, setStatus] = useState<AsyncState>('idle')
   const [deleteState, setDeleteState] = useState<AsyncState>('idle')
   const [error, setError] = useState<string | null>(null)
@@ -18,6 +26,13 @@ export default function SettingsPage() {
       if (!profile) return
       setUser(profile)
       setPrefersAnonymous(profile.prefers_anonymous ?? false)
+      setPrivacySettings({
+        show_mood_trends: profile.privacy_settings?.show_mood_trends ?? true,
+        show_craving_levels: profile.privacy_settings?.show_craving_levels ?? true,
+        show_notes: profile.privacy_settings?.show_notes ?? false,
+        show_streak: profile.privacy_settings?.show_streak ?? true,
+        show_badges: profile.privacy_settings?.show_badges ?? true,
+      })
     })
   }, [])
 
@@ -29,6 +44,7 @@ export default function SettingsPage() {
     try {
       await updateUserProfile(user.id, {
         prefers_anonymous: prefersAnonymous,
+        privacy_settings: privacySettings,
       })
       setStatus('success')
       setTimeout(() => setStatus('idle'), 2500)
@@ -117,6 +133,60 @@ export default function SettingsPage() {
           )}
         </section>
 
+        <section className="space-y-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+          <header>
+            <h2 className="text-lg font-semibold text-gray-900">What supporters can see</h2>
+            <p className="mt-1 text-sm text-gray-600">
+              You stay in control. Choose which insights appear for the supporters you invite. We always explain when
+              something is hidden so expectations stay clear.
+            </p>
+          </header>
+
+          <PrivacyToggle
+            label="Mood & energy trends"
+            description="Share the mood chart so supporters can spot patterns and offer help at the right moments."
+            checked={privacySettings.show_mood_trends}
+            onChange={(value) =>
+              setPrivacySettings((prev) => ({ ...prev, show_mood_trends: value }))
+            }
+          />
+
+          <PrivacyToggle
+            label="Cravings & stress levels"
+            description="Allow supporters to see craving intensity and stress load so guidance stays grounded in what you’re feeling."
+            checked={privacySettings.show_craving_levels}
+            onChange={(value) =>
+              setPrivacySettings((prev) => ({ ...prev, show_craving_levels: value }))
+            }
+          />
+
+          <PrivacyToggle
+            label="Personal notes"
+            description="Keep written reflections private. When off, supporters know you logged a note but can’t read it."
+            checked={privacySettings.show_notes}
+            onChange={(value) => setPrivacySettings((prev) => ({ ...prev, show_notes: value }))}
+          />
+
+          <PrivacyToggle
+            label="Sobriety or streak progress"
+            description="Share your streak ring and milestone messages, or keep that progress personal."
+            checked={privacySettings.show_streak}
+            onChange={(value) => setPrivacySettings((prev) => ({ ...prev, show_streak: value }))}
+          />
+
+          <PrivacyToggle
+            label="Badges & celebrations"
+            description="Show celebrations and badges so supporters can celebrate wins with you."
+            checked={privacySettings.show_badges}
+            onChange={(value) => setPrivacySettings((prev) => ({ ...prev, show_badges: value }))}
+          />
+
+          <p className="text-xs text-gray-500">
+            Changes apply instantly once you save. Supporters never see more than you allow, and every alert stays
+            advisory.
+          </p>
+        </section>
+
         <section className="space-y-4 rounded-3xl border border-rose-200 bg-rose-50 p-6 shadow-sm">
           <header>
             <h2 className="text-lg font-semibold text-rose-800">Delete my data</h2>
@@ -149,6 +219,33 @@ export default function SettingsPage() {
         )}
       </div>
     </div>
+  )
+}
+
+function PrivacyToggle({
+  label,
+  description,
+  checked,
+  onChange,
+}: {
+  label: string
+  description: string
+  checked: boolean
+  onChange: (value: boolean) => void
+}) {
+  return (
+    <label className="flex items-start gap-3 rounded-2xl border border-gray-200 bg-gray-50/80 p-4 transition hover:bg-gray-100">
+      <input
+        type="checkbox"
+        className="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+      <span className="space-y-1 text-sm text-gray-700">
+        <span className="block font-semibold text-gray-900">{label}</span>
+        <span>{description}</span>
+      </span>
+    </label>
   )
 }
 

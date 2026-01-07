@@ -44,7 +44,14 @@ CREATE TABLE users (
     }'::jsonb,
     prefers_anonymous BOOLEAN DEFAULT false,
     is_admin BOOLEAN DEFAULT false,
-    user_type TEXT DEFAULT 'regular'
+    user_type TEXT DEFAULT 'regular',
+    privacy_settings JSONB DEFAULT '{
+        "show_mood_trends": true,
+        "show_craving_levels": true,
+        "show_notes": false,
+        "show_streak": true,
+        "show_badges": true
+    }'::jsonb
 );
 
 -- Mood entries table
