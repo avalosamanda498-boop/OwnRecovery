@@ -46,9 +46,8 @@ export function InviteCodePanel({ code, expiresAt, generating, onGenerate }: Inv
         <div className="space-y-2">
           <h2 className="text-lg font-semibold text-gray-900">Invite a supporter</h2>
           <p className="text-sm text-gray-600">
-            Share this short code with someone you trust. They’ll add it in their dashboard to
-            connect. We keep it advisory and human-in-the-loop—only the people you approve can view
-            the insights you decide to share.
+            Share this short code with someone you trust. They’ll add it in their dashboard to connect. We keep guidance
+            gentle and human-led—only the people you approve can view the insights you choose to share.
           </p>
         </div>
         <button

@@ -54,7 +54,7 @@ export function SupportMessagesFeed({ title = 'Support shared with you', limit =
         <div>
           <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
           <p className="text-sm text-gray-600">
-            Encouragement stays advisory. Supporters can cheer you on, and you decide how to respond.
+            Encouragement stays gentle. Supporters can cheer you on, and you decide how to respond.
           </p>
         </div>
         <button

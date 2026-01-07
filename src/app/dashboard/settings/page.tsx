@@ -90,8 +90,8 @@ export default function SettingsPage() {
         <header className="rounded-3xl border border-primary-100 bg-white p-8 shadow-sm">
           <h1 className="text-3xl font-bold text-gray-900">Privacy & safeguards</h1>
           <p className="mt-2 text-sm text-gray-600">
-            Own Recovery keeps AI advisory and humans in control. Review how you appear to supporters, and manage your
-            data here.
+            Own Recovery keeps AI as gentle guidance while humans stay in control. Review how you appear to supporters,
+            and manage your data here.
           </p>
           <Link href="/dashboard" className="mt-4 inline-flex text-sm text-primary-600 underline">
             Back to dashboard
@@ -182,8 +182,8 @@ export default function SettingsPage() {
           />
 
           <p className="text-xs text-gray-500">
-            Changes apply instantly once you save. Supporters never see more than you allow, and every alert stays
-            advisory.
+            Changes apply instantly once you save. Supporters never see more than you allow, and every alert remains a
+            suggestion—you choose what to act on.
           </p>
         </section>
 

@@ -232,7 +232,7 @@ export default function ConnectionsPage() {
         {(activeSummary.role === 'supporter' || activeSummary.asSupporter.length > 0) && (
           <ConnectionList
             title="People you support"
-            description="You’ll see advisory alerts and trends they choose to share."
+            description="You’ll see gentle alerts and trends they choose to share."
             emptyState={{
               headline: 'No connections yet',
               message: 'Add a code from a recovery partner to show up as their supporter.',

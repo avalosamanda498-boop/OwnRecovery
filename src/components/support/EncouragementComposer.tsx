@@ -96,7 +96,7 @@ export function EncouragementComposer({ connections, onSent }: EncouragementComp
             {status === 'success' && <span className="text-sm font-medium text-success-600">Sent</span>}
           </div>
           <p className="text-sm text-gray-600">
-            Encouragement stays advisory. Your friend sees this message and any emoji you include—nothing more.
+            Encouragement stays gentle. Your friend sees this message and any emoji you include—nothing more.
           </p>
         </div>
 

@@ -129,7 +129,7 @@ export default function MoodCravingLogger({
       </div>
 
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {/* Track stress in plain language so advisory alerts stay explainable. */}
+        {/* Track stress in plain language so these nudges stay explainable. */}
         {/* Sleep quality helps contextualize stress trends without guessing. */}
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-gray-700">How are you feeling right now?</h3>

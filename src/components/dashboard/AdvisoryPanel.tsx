@@ -29,7 +29,7 @@ export function AdvisoryPanel({ range = 7 }: AdvisoryPanelProps) {
     let mounted = true
     ;(async () => {
       try {
-        // Evaluate recent logs client-side so guidance stays transparent and advisory.
+        // Evaluate recent logs client-side so guidance stays transparent and human-led.
         const history = await fetchMoodHistory(range)
         if (!mounted) return
         setAlerts(evaluateAlerts(history))
@@ -68,7 +68,7 @@ export function AdvisoryPanel({ range = 7 }: AdvisoryPanelProps) {
       <section className="rounded-2xl border border-emerald-100 bg-emerald-50/80 p-5 shadow-sm">
         <p className="text-sm font-semibold text-emerald-800">All signals are steady.</p>
         <p className="mt-1 text-xs text-emerald-700">
-          Insights stay advisory. Keep logging each day so we can surface early nudges when you need them.
+          Insights stay gentle nudges. Keep logging each day so we can surface support early when you need it.
         </p>
       </section>
     )
@@ -88,7 +88,7 @@ export function AdvisoryPanel({ range = 7 }: AdvisoryPanelProps) {
               <p className="mt-2 text-sm leading-relaxed">{alert.message}</p>
             </div>
             <span className="rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-medium text-gray-600">
-              Advisory • You choose the next step
+              Gentle reminder • You choose the next step
             </span>
           </div>
         </article>
