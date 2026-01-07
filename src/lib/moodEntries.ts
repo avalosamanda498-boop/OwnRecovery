@@ -94,6 +94,18 @@ export async function createMoodEntry({
     throw new Error('Trigger descriptions must be 120 characters or fewer.')
   }
 
+  const { data: profileRow, error: profileError } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  if (profileError) {
+    console.error('Error loading user profile while logging mood', profileError)
+  }
+
+  const isSupporter = profileRow?.role === 'supporter'
+
   const { data, error } = await supabase
     .from('mood_entries')
     .insert({
@@ -112,7 +124,7 @@ export async function createMoodEntry({
     throw error || new Error('No mood entry returned after insert.')
   }
 
-  const newBadges = await checkAndAwardBadges(user.id, craving)
+  const newBadges = isSupporter ? [] : await checkAndAwardBadges(user.id, craving)
 
   return {
     entry: data as CreateMoodEntryResult['entry'],

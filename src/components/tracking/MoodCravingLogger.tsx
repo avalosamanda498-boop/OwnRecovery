@@ -27,6 +27,7 @@ interface MoodCravingLoggerProps {
   showCravings?: boolean
   cravingTitle?: string
   onBadgeAwarded?: (badges: BadgeRecord[]) => void
+  showLatestEntry?: boolean
 }
 
 interface MoodEntrySummary {
@@ -45,6 +46,7 @@ export default function MoodCravingLogger({
   showCravings = true,
   cravingTitle = 'Craving check-in',
   onBadgeAwarded,
+  showLatestEntry = true,
 }: MoodCravingLoggerProps) {
   const [selectedMood, setSelectedMood] = useState<MoodOption | null>(null)
   const [selectedCraving, setSelectedCraving] = useState<CravingOption | null>(showCravings ? null : 'none')
@@ -59,6 +61,7 @@ export default function MoodCravingLogger({
   const [earnedBadges, setEarnedBadges] = useState<BadgeRecord[]>([])
 
   useEffect(() => {
+    if (!showLatestEntry) return
     fetchLatestMoodEntry()
       .then((entry) => {
         if (entry) {
@@ -68,7 +71,7 @@ export default function MoodCravingLogger({
       .catch(() => {
         // ignore initial load errors
       })
-  }, [])
+  }, [showLatestEntry])
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -264,7 +267,7 @@ export default function MoodCravingLogger({
         </div>
       </form>
 
-      {latestEntry && (
+      {showLatestEntry && latestEntry && (
         <div className="rounded-xl border border-gray-200 p-4 bg-gray-50 text-sm text-gray-700">
           <p>
             <span className="font-medium text-gray-900">Last entry:</span>{' '}

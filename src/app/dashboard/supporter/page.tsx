@@ -4,20 +4,16 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
 import MoodTrendChart from '@/components/tracking/MoodTrendChart'
-import { RecentBadges } from '@/components/badges/RecentBadges'
 import { AdvisoryPanel } from '@/components/dashboard/AdvisoryPanel'
 import { EncouragementComposer } from '@/components/support/EncouragementComposer'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
 import { fetchConnectionsSummary, type ConnectionSummary } from '@/lib/connections'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
-import type { BadgeRecord } from '@/lib/badges'
 
 export default function SupporterDashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [history, setHistory] = useState<MoodHistoryPoint[]>([])
   const [range, setRange] = useState<7 | 14 | 30>(7)
-  const [badgeRefreshKey, setBadgeRefreshKey] = useState(0)
-  const [latestBadges, setLatestBadges] = useState<BadgeRecord[]>([])
   const [connections, setConnections] = useState<ConnectionSummary[]>([])
   const [connectionsLoading, setConnectionsLoading] = useState(true)
   const [connectionsError, setConnectionsError] = useState<string | null>(null)
@@ -97,25 +93,24 @@ export default function SupporterDashboardPage() {
             success: 'Thanks for taking a moment for yourself. We’ll use these check-ins to keep you supported as well.',
           }}
           showCravings={false}
-          onBadgeAwarded={(badges) => {
-            setBadgeRefreshKey((value) => value + 1)
-            setLatestBadges(badges)
-          }}
+          showLatestEntry={false}
         />
 
         <AdvisoryPanel range={7} />
-
-        <RecentBadges
-          refreshKey={badgeRefreshKey}
-          latestBadges={latestBadges}
-          title="Support milestones"
-          emptyMessage="Your first supporter badge appears after your next few reflections."
-        />
 
         <EncouragementComposer
           connections={connections}
           onSent={refreshConnections}
         />
+
+        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-900">Support milestones (coming soon)</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            We’re designing celebrations tailored for supporters—consistency streaks, meaningful check-ins, and moments
+            where your encouragement made a difference. For now, focus on being present; we’ll surface celebrations
+            without comparing you to recovery milestones.
+          </p>
+        </section>
 
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
