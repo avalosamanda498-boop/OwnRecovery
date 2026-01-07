@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
 import LogStreakGraph from '@/components/tracking/LogStreakGraph'
 import MoodTrendChart from '@/components/tracking/MoodTrendChart'
 import { RecentBadges } from '@/components/badges/RecentBadges'
+import { AdvisoryPanel } from '@/components/dashboard/AdvisoryPanel'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
 import { fetchLogBasedStreak } from '@/lib/streaks'
@@ -45,10 +47,20 @@ export default function StillUsingDashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 py-12 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
         <header className="bg-white border border-secondary-100 shadow-sm rounded-2xl p-8">
-          <h1 className="text-3xl font-bold text-gray-900">You’re here—and that matters</h1>
-          <p className="mt-2 text-gray-600">
-            This space grows with you. We’ll surface gentle prompts, coping ideas, and real stories whenever you’re ready.
-          </p>
+          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">You’re here—and that matters</h1>
+              <p className="mt-2 text-gray-600">
+                This space grows with you. We’ll surface gentle prompts, coping ideas, and real stories whenever you’re ready.
+              </p>
+            </div>
+            <Link
+              href="/dashboard/settings"
+              className="inline-flex items-center gap-2 rounded-full border border-secondary-200 bg-secondary-50 px-4 py-2 text-sm font-medium text-secondary-700 shadow-sm transition hover:bg-secondary-100"
+            >
+              Privacy &amp; data controls
+            </Link>
+          </div>
         </header>
 
         <MoodCravingLogger
@@ -63,6 +75,8 @@ export default function StillUsingDashboardPage() {
             setLatestBadges(badges)
           }}
         />
+
+        <AdvisoryPanel range={7} />
 
         {streak && (
           <section className="bg-white border border-secondary-100 rounded-2xl shadow-sm p-6">

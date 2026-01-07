@@ -10,6 +10,7 @@ export interface AuthUser {
   onboarding_completed?: boolean
   user_type?: UserType
   sobriety_start_date?: string | null
+  prefers_anonymous?: boolean
 }
 
 export async function signUp(email: string, password: string, fullName: string) {
@@ -52,7 +53,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
   const { data: profileRows, error: selectError } = await supabase
     .from('users')
-    .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type, sobriety_start_date')
+    .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type, sobriety_start_date, prefers_anonymous')
     .eq('id', user.id)
     .limit(1)
 
@@ -72,6 +73,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
       email: user.email,
       full_name: user.user_metadata?.full_name ?? null,
       user_type: 'regular',
+      prefers_anonymous: false,
     }
 
     const { error: insertError } = await supabase.from('users').insert(insertPayload)
@@ -89,7 +91,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
     const { data: newProfileRows, error: refetchError } = await supabase
       .from('users')
-      .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type, sobriety_start_date')
+      .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type, sobriety_start_date, prefers_anonymous')
       .eq('id', user.id)
       .limit(1)
 
@@ -109,6 +111,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     onboarding_completed: profile?.onboarding_completed || false,
     user_type: (profile?.user_type as UserType) || 'regular',
     sobriety_start_date: profile?.sobriety_start_date || null,
+    prefers_anonymous: profile?.prefers_anonymous ?? false,
   }
 }
 
@@ -139,6 +142,7 @@ export async function updateUserProfile(userId: string, updates: {
     milestone_celebrations: boolean
     supporter_messages: boolean
   }
+  prefers_anonymous?: boolean
 }) {
   const { error } = await supabase
     .from('users')

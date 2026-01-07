@@ -1,16 +1,61 @@
-# Own Recovery
+# Own Recovery — A Human-in-the-Loop AI Companion for Addiction Recovery
 
-A supportive, AI-powered companion for your recovery journey. Whether you're thinking about change, actively using, or already in recovery, we're here to support you every step of the way.
+Own Recovery is a medical-AI-inspired, human-in-the-loop digital companion that supports people navigating substance use recovery. Everything centers on trust, predictable logic, and human decision-making. The app delivers consistent daily check-ins, recovery streak tracking, and ethically framed alerts while keeping supporters in the loop on the user’s terms. AI helps surface insights—but people stay in control.
 
-## 🚀 Features
+## Why it matters
 
-- **Multi-Role Support**: Designed for people in recovery, those thinking about change, and their supporters
-- **AI-Powered Check-ins**: Personalized daily check-ins and content recommendations
-- **Mood & Craving Tracking**: Visual progress tracking with insights
-- **Streak Counter**: Celebrate sobriety milestones and daily achievements
-- **Family Connection**: Supporters can connect and send encouragement
-- **Crisis Support**: Immediate access to helplines and emergency resources
-- **Resource Library**: Curated articles, videos, and tools for recovery
+- **Ethical, reliable AI**: Own Recovery uses rule-based, explainable logic so alerts are predictable, reproducible, and advisory. The person and their supporters always make the final call.
+- **Inspired by AA levels of trust**: Calm language, low cognitive load, and predictable behavior mirror the principles of Alcoholics Anonymous platforms.
+- **Human-in-the-loop**: Supporters, clinicians, or the user themselves review any AI suggestions before acting. Nothing auto-escalates.
+- **Privacy-first and consent-driven**: Users can remain anonymous, adjust what supporters see, and delete data anytime.
+
+## 🚀 Core Features
+
+- **Multi-Role Experiences**  
+  Recovery, Thinking About Change, and Supporter dashboards provide tailored journeys.
+
+- **Reliable Daily Check-ins**  
+  Rule-based AI observes mood, cravings, sleep, and stress patterns to surface consistent, advisory insights.
+
+- **Explainable Risk Alerts**  
+  If a pattern signals elevated risk, the app explains why and prompts humans to follow up—users and supporters stay in charge.
+
+- **Wellness Context Logging**  
+  Daily check-ins include stress load, sleep quality, and optional triggers so supporters understand the whole picture.
+
+- **Celebrations & Milestones**  
+  Sobriety streaks, log streaks, and honesty badges reinforce momentum with joyful, human-centered design.
+
+- **Family & Supporter Engagement**  
+  Invitation codes or email invites connect supporters, with privacy controls that keep ownership with the person in recovery.
+
+- **Crisis Support**  
+  Always-on “Help Now” button and smart keyword detection to surface hotlines immediately—without panic, always clear and calm.
+
+- **Resource Library (curated)**  
+  Placeholder content today; AI-assisted curation later, keeping everything explainable and verifiable.
+
+## ⚖️ Ethical & Design Principles
+
+- **Predictable AI**: Rule-based logic so outputs are explainable and reproduceable. No opaque black boxes.
+- **Human Oversight**: AI never acts on its own; people decide how to respond.
+- **Privacy & Consent**: Privacy controls, anonymized usage, and full data deletion options.
+- **Inclusive Experience**: High-contrast, accessible typography and language focused on dignity and hope.
+
+## Product Roadmap (Current Phase)
+
+- Phase 2 completed: Mood + craving logging, streaks, charts, and badge celebrations.
+- Phase 3 in progress: Supporter connections, privacy controls, encouragement flows, and resource library scaffolding.
+  - New this iteration: advisory alerts, stress/sleep logging, anonymous mode toggle, and in-app data deletion.
+- Phase 4 upcoming: Crisis keyword detection with human escalation, weekly summaries, and admin oversight for flagged events (always respecting RLS in Supabase).
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
+- **Backend**: Supabase (PostgreSQL, Auth, Realtime) with Row Level Security
+- **Deployment**: Vercel (automatic on every `main` push)
+- **AI**: Rule-based logic first; OpenAI API integration planned for templated, supervised insights
+- **Design System**: Recovery-focused palette reinforcing calm, hope, and accessibility
 
 ## 🛠️ Tech Stack
 

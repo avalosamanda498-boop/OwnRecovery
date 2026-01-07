@@ -72,7 +72,7 @@ async function ensureProfile(userId: string): Promise<AuthUser | null> {
   const { data, error } = await supabase
     .from('users')
     .select(
-      'id, email, full_name, role, is_admin, onboarding_completed, user_type, sobriety_start_date'
+      'id, email, full_name, role, is_admin, onboarding_completed, user_type, sobriety_start_date, prefers_anonymous'
     )
     .eq('id', userId)
     .maybeSingle()
@@ -93,6 +93,7 @@ async function ensureProfile(userId: string): Promise<AuthUser | null> {
     onboarding_completed: data.onboarding_completed ?? false,
     user_type: data.user_type ?? 'regular',
     sobriety_start_date: data.sobriety_start_date ?? null,
+    prefers_anonymous: data.prefers_anonymous ?? false,
   }
 }
 

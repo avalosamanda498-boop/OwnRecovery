@@ -12,6 +12,7 @@
     "db:push": "supabase db push"
   },
   "dependencies": {
+    "@supabase/auth-helpers-nextjs": "^0.8.6",
     "@supabase/supabase-js": "^2.39.0",
     "@types/node": "^20",
     "@types/react": "^18",

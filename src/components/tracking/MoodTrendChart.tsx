@@ -28,29 +28,97 @@ function moodScoreLabel(score: number) {
 
 export default function MoodTrendChart({ data, rangeLabel }: MoodTrendChartProps) {
   const chartData = useMemo(() => {
-    const aggregated = new Map<string, { moodScore: number; cravingScore: number; count: number }>()
+    const aggregated = new Map<
+      string,
+      {
+        moodScore: number
+        cravingScore: number
+        stressScore: number
+        sleepScore: number
+        moodCount: number
+        cravingCount: number
+        stressCount: number
+        sleepCount: number
+      }
+    >()
 
     data.forEach((point) => {
       const bucket = aggregated.get(point.date)
       if (bucket) {
         bucket.moodScore += point.moodScore
         bucket.cravingScore += point.cravingScore
-        bucket.count += 1
+        bucket.moodCount += 1
+        bucket.cravingCount += 1
+        if (point.stressScore !== null) {
+          bucket.stressScore += point.stressScore
+          bucket.stressCount += 1
+        }
+        if (point.sleepScore !== null) {
+          bucket.sleepScore += point.sleepScore
+          bucket.sleepCount += 1
+        }
       } else {
         aggregated.set(point.date, {
           moodScore: point.moodScore,
           cravingScore: point.cravingScore,
-          count: 1,
+          stressScore: point.stressScore ?? 0,
+          sleepScore: point.sleepScore ?? 0,
+          moodCount: 1,
+          cravingCount: 1,
+          stressCount: point.stressScore !== null ? 1 : 0,
+          sleepCount: point.sleepScore !== null ? 1 : 0,
         })
       }
     })
 
     return Array.from(aggregated.entries()).map(([date, values]) => ({
       date,
-      moodScore: Number((values.moodScore / values.count).toFixed(2)),
-      cravingScore: Number((values.cravingScore / values.count).toFixed(2)),
+      moodScore: Number((values.moodScore / Math.max(values.moodCount, 1)).toFixed(2)),
+      cravingScore: Number((values.cravingScore / Math.max(values.cravingCount, 1)).toFixed(2)),
+      stressScore:
+        values.stressCount > 0 ? Number((values.stressScore / values.stressCount).toFixed(2)) : null,
+      sleepScore: values.sleepCount > 0 ? Number((values.sleepScore / values.sleepCount).toFixed(2)) : null,
     }))
   }, [data])
+
+  const trendInsight = useMemo(() => {
+    if (!chartData.length) return null
+
+    const mostRecent = chartData[chartData.length - 1]
+    const previous = chartData.length > 1 ? chartData[chartData.length - 2] : null
+
+    if (!previous) {
+      return 'Daily logs build the trend picture. Keep checking in to surface helpful patterns.'
+    }
+
+    const messages: string[] = []
+
+    if (mostRecent.moodScore > previous.moodScore + 0.5) {
+      messages.push('Mood lifted compared to yesterday—celebrate what helped you reset.')
+    } else if (mostRecent.moodScore + 0.5 < previous.moodScore) {
+      messages.push('Mood dipped today. Consider a grounding tool or quick outreach.')
+    }
+
+    if (mostRecent.cravingScore > previous.cravingScore + 0.5) {
+      messages.push('Cravings climbed—review your safety plan or coping stack.')
+    }
+
+    if (mostRecent.stressScore !== null && previous.stressScore !== null) {
+      if (mostRecent.stressScore > previous.stressScore + 0.5) {
+        messages.push('Stress ticked up. Breathing exercises or a short walk can help reset.')
+      }
+    }
+
+    if (mostRecent.sleepScore !== null && mostRecent.sleepScore <= 2) {
+      messages.push('Sleep was rough. Pair today with lighter commitments and extra support.')
+    }
+
+    if (!messages.length) {
+      messages.push('Trends look steady. Keep checking in so we can spot changes early.')
+    }
+
+    return messages.join(' ')
+  }, [chartData])
 
   if (!chartData.length) {
     return (
@@ -73,10 +141,16 @@ export default function MoodTrendChart({ data, rangeLabel }: MoodTrendChartProps
             allowDecimals={false}
           />
           <Tooltip
-            cursor={{ fill: 'rgba(14, 165, 233, 0.1)' }}
+            cursor={{ fill: 'rgba(14, 165, 233, 0.08)' }}
             formatter={(value: number, name) => {
               if (name === 'Mood') {
                 return [moodScoreLabel(value), 'Mood']
+              }
+              if (name === 'Stress') {
+                return [value.toFixed(1), 'Stress (higher = heavier)']
+              }
+              if (name === 'Sleep') {
+                return [value.toFixed(1), 'Sleep (higher = more restored)']
               }
               return [value.toFixed(1), 'Cravings']
             }}
@@ -85,10 +159,10 @@ export default function MoodTrendChart({ data, rangeLabel }: MoodTrendChartProps
             type="monotone"
             dataKey="cravingScore"
             name="Cravings"
-            fill="#fef3c7"
+            fill="#fde68a"
             stroke="#f59e0b"
             strokeWidth={2}
-            fillOpacity={0.6}
+            fillOpacity={0.35}
           />
           <Line
             type="monotone"
@@ -99,9 +173,34 @@ export default function MoodTrendChart({ data, rangeLabel }: MoodTrendChartProps
             dot={{ r: 3 }}
             activeDot={{ r: 6 }}
           />
+          <Line
+            type="monotone"
+            dataKey="stressScore"
+            name="Stress"
+            stroke="#ef4444"
+            strokeDasharray="4 4"
+            strokeWidth={2}
+            dot={{ r: 2 }}
+            connectNulls
+          />
+          <Line
+            type="monotone"
+            dataKey="sleepScore"
+            name="Sleep"
+            stroke="#22c55e"
+            strokeWidth={2}
+            dot={{ r: 2 }}
+            connectNulls
+          />
         </ComposedChart>
       </ResponsiveContainer>
     </div>
+    {trendInsight && (
+      <div className="mt-3 rounded-2xl border border-primary-100 bg-primary-50/60 p-4 text-sm text-primary-800">
+        <p className="font-medium text-primary-900">Today’s interpretation</p>
+        <p className="mt-1">{trendInsight}</p>
+      </div>
+    )}
   )
 }
 

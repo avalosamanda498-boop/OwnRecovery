@@ -6,6 +6,7 @@ import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
 import RecoveryStreakRadial from '@/components/tracking/RecoveryStreakRadial'
 import MoodTrendChart from '@/components/tracking/MoodTrendChart'
 import { RecentBadges } from '@/components/badges/RecentBadges'
+import { AdvisoryPanel } from '@/components/dashboard/AdvisoryPanel'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
 import { fetchRecoveryStreak } from '@/lib/streaks'
@@ -46,10 +47,22 @@ export default function RecoveryDashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-12 px-4">
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="bg-white border border-primary-100 shadow-sm rounded-2xl p-8">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user.full_name || 'friend'}</h1>
-          <p className="mt-2 text-gray-600">
-            This is your recovery home base. We’ll surface streaks, mood insights, encouragement, and a quick path to support as we build out the full experience.
-          </p>
+          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Welcome back, {user.prefers_anonymous ? 'friend' : user.full_name || 'friend'}
+              </h1>
+              <p className="mt-2 text-gray-600">
+                This is your recovery home base. We’ll surface streaks, mood insights, encouragement, and a quick path to support as we build out the full experience.
+              </p>
+            </div>
+            <Link
+              href="/dashboard/settings"
+              className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 shadow-sm transition hover:bg-primary-100"
+            >
+              Privacy &amp; data controls
+            </Link>
+          </div>
         </header>
 
         <MoodCravingLogger
@@ -64,6 +77,8 @@ export default function RecoveryDashboardPage() {
             setLatestBadges(badges)
           }}
         />
+
+        <AdvisoryPanel range={7} />
 
         {streak && (
           <section className="bg-white border border-primary-100 rounded-2xl shadow-sm p-6">

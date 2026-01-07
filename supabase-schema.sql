@@ -31,7 +31,8 @@ CREATE TABLE users (
         "daily_reminders": true,
         "milestone_celebrations": true,
         "supporter_messages": true
-    }'::jsonb
+    }'::jsonb,
+    prefers_anonymous BOOLEAN DEFAULT false
 );
 
 -- Mood entries table
@@ -41,6 +42,9 @@ CREATE TABLE mood_entries (
     mood mood_type NOT NULL,
     craving_level craving_level NOT NULL,
     note TEXT,
+    stress_level TEXT CHECK (stress_level IN ('low', 'moderate', 'high')),
+    sleep_quality TEXT CHECK (sleep_quality IN ('rested', 'okay', 'poor')),
+    stress_trigger TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

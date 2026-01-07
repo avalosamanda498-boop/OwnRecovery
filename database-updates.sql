@@ -116,6 +116,16 @@ ALTER TABLE public.badges
   ADD COLUMN IF NOT EXISTS icon TEXT,
   ADD COLUMN IF NOT EXISTS metadata JSONB;
 
+-- Add wellness context to mood entries
+ALTER TABLE public.mood_entries
+  ADD COLUMN IF NOT EXISTS stress_level TEXT CHECK (stress_level IN ('low', 'moderate', 'high')),
+  ADD COLUMN IF NOT EXISTS sleep_quality TEXT CHECK (sleep_quality IN ('rested', 'okay', 'poor')),
+  ADD COLUMN IF NOT EXISTS stress_trigger TEXT;
+
+-- Allow users to opt into anonymous mode
+ALTER TABLE public.users
+  ADD COLUMN IF NOT EXISTS prefers_anonymous BOOLEAN DEFAULT false;
+
 CREATE UNIQUE INDEX IF NOT EXISTS badges_user_type_unique ON public.badges(user_id, badge_type);
 CREATE INDEX IF NOT EXISTS idx_badges_user_id ON public.badges(user_id);
 

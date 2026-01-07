@@ -1,7 +1,18 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createMoodEntry, fetchLatestMoodEntry, MOOD_CHOICES, CRAVING_CHOICES, MoodOption, CravingOption } from '@/lib/moodEntries'
+import {
+  createMoodEntry,
+  fetchLatestMoodEntry,
+  MOOD_CHOICES,
+  CRAVING_CHOICES,
+  STRESS_CHOICES,
+  SLEEP_CHOICES,
+  MoodOption,
+  CravingOption,
+  StressOption,
+  SleepOption,
+} from '@/lib/moodEntries'
 import type { BadgeRecord } from '@/lib/badges'
 import { BadgeCelebrationToast } from '@/components/badges/BadgeCelebrationToast'
 import { AuthUser } from '@/lib/auth'
@@ -22,6 +33,9 @@ interface MoodEntrySummary {
   mood: string
   craving_level: string
   note: string | null
+  stress_level: string | null
+  sleep_quality: string | null
+  stress_trigger: string | null
   created_at: string
 }
 
@@ -34,7 +48,10 @@ export default function MoodCravingLogger({
 }: MoodCravingLoggerProps) {
   const [selectedMood, setSelectedMood] = useState<MoodOption | null>(null)
   const [selectedCraving, setSelectedCraving] = useState<CravingOption | null>(showCravings ? null : 'none')
+  const [selectedStress, setSelectedStress] = useState<StressOption | null>(null)
+  const [selectedSleep, setSelectedSleep] = useState<SleepOption | null>(null)
   const [note, setNote] = useState('')
+  const [stressTrigger, setStressTrigger] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -70,6 +87,9 @@ export default function MoodCravingLogger({
         mood: selectedMood,
         craving: cravingToSave,
         note,
+        stress: selectedStress,
+        sleep: selectedSleep,
+        stressTrigger: stressTrigger || undefined,
       })
 
       setSuccess(roleCopy.success)
@@ -80,7 +100,10 @@ export default function MoodCravingLogger({
       setLatestEntry(result.entry as MoodEntrySummary)
       setSelectedMood(null)
       setSelectedCraving(showCravings ? null : 'none')
+      setSelectedStress(null)
+      setSelectedSleep(null)
       setNote('')
+      setStressTrigger('')
     } catch (err: any) {
       setError(err.message || 'Something went wrong while saving your entry.')
     } finally {
@@ -88,7 +111,12 @@ export default function MoodCravingLogger({
     }
   }
 
-  const buttonDisabled = !selectedMood || (showCravings && !selectedCraving) || submitting
+  const buttonDisabled =
+    !selectedMood ||
+    (showCravings && !selectedCraving) ||
+    !selectedStress ||
+    !selectedSleep ||
+    submitting
 
   return (
     <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-6">
@@ -98,6 +126,8 @@ export default function MoodCravingLogger({
       </div>
 
       <form className="space-y-6" onSubmit={handleSubmit}>
+        {/* Track stress in plain language so advisory alerts stay explainable. */}
+        {/* Sleep quality helps contextualize stress trends without guessing. */}
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-gray-700">How are you feeling right now?</h3>
           <div className="flex flex-wrap gap-3">
@@ -137,6 +167,49 @@ export default function MoodCravingLogger({
           </div>
         )}
 
+        <div className="space-y-3">
+          <h3 className="text-sm font-medium text-gray-700">How heavy is stress today?</h3>
+          <div className="grid gap-2 md:grid-cols-3">
+            {STRESS_CHOICES.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => setSelectedStress(option.id)}
+                className={`rounded-2xl border px-3 py-3 text-left transition-colors ${
+                  selectedStress === option.id
+                    ? 'border-warning-500 bg-warning-50 text-warning-800 shadow-sm'
+                    : 'border-gray-300 text-gray-700 hover:border-warning-300'
+                }`}
+              >
+                <p className="text-sm font-semibold">{option.label}</p>
+                <p className="mt-1 text-xs text-gray-600">{option.description}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-sm font-medium text-gray-700">How did you sleep?</h3>
+          <div className="grid gap-2 md:grid-cols-3">
+            {SLEEP_CHOICES.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => setSelectedSleep(option.id)}
+                className={`rounded-2xl border px-3 py-3 text-left transition-colors ${
+                  selectedSleep === option.id
+                    ? 'border-primary-500 bg-primary-50 text-primary-800 shadow-sm'
+                    : 'border-gray-300 text-gray-700 hover:border-primary-300'
+                }`}
+              >
+                <p className="text-sm font-semibold">{option.label}</p>
+                <p className="mt-1 text-xs text-gray-600">{option.description}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Optional trigger context gives supporters actionable information. */}
         <div>
           <label htmlFor="mood-note" className="block text-sm font-medium text-gray-700">
             Notes (optional)
@@ -148,6 +221,22 @@ export default function MoodCravingLogger({
             placeholder="Add a quick reflection, trigger, or win you want to remember."
             className="input-field mt-1 h-24 resize-none"
           />
+        </div>
+
+        <div>
+          <label htmlFor="stress-trigger" className="block text-sm font-medium text-gray-700">
+            Noticing what’s adding pressure? (optional)
+          </label>
+          <input
+            id="stress-trigger"
+            type="text"
+            maxLength={120}
+            value={stressTrigger}
+            onChange={(e) => setStressTrigger(e.target.value)}
+            placeholder="e.g., Big meeting tomorrow, difficult conversation, feeling isolated"
+            className="input-field mt-1"
+          />
+          <p className="mt-1 text-xs text-gray-500">Sharing triggers helps the app surface more relevant guidance.</p>
         </div>
 
         {error && (
@@ -197,6 +286,24 @@ export default function MoodCravingLogger({
                 : latestEntry.craving_level.replace('_', ' ')}
             </span>
           </p>
+          <p className="mt-1">
+            Stress:{' '}
+            <span className="font-medium capitalize">
+              {latestEntry.stress_level ? latestEntry.stress_level.replace('_', ' ') : 'Not logged'}
+            </span>
+          </p>
+          <p className="mt-1">
+            Sleep:{' '}
+            <span className="font-medium capitalize">
+              {latestEntry.sleep_quality ? latestEntry.sleep_quality.replace('_', ' ') : 'Not logged'}
+            </span>
+          </p>
+          {latestEntry.stress_trigger && (
+            <p className="mt-1 text-xs text-gray-600">
+              <span className="font-medium text-gray-700">Trigger: </span>
+              {latestEntry.stress_trigger}
+            </p>
+          )}
           {latestEntry.note && <p className="mt-2 italic text-gray-600">“{latestEntry.note}”</p>}
         </div>
       )}

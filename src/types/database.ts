@@ -31,6 +31,7 @@ export interface User {
     milestone_celebrations: boolean
     supporter_messages: boolean
   }
+  prefers_anonymous?: boolean
 }
 
 export interface MoodEntry {
@@ -39,6 +40,9 @@ export interface MoodEntry {
   mood: 'happy' | 'neutral' | 'sad' | 'anxious' | 'angry' | 'tired' | 'energized'
   craving_level: 'none' | 'mild' | 'strong' | 'at_risk' | 'used_today'
   note?: string
+  stress_level?: 'low' | 'moderate' | 'high'
+  sleep_quality?: 'rested' | 'okay' | 'poor'
+  stress_trigger?: string | null
   created_at: string
   updated_at: string
 }
