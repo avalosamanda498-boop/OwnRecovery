@@ -122,6 +122,8 @@ export async function GET(request: Request) {
 
   const connectionsAsRecovery = asRecoveryConnections.map((connection) => ({
     id: connection.id,
+    supporter_id: connection.supporter_id,
+    recovery_user_id: connection.recovery_user_id,
     status: connection.status,
     created_at: connection.created_at,
     accepted_at: connection.accepted_at,
@@ -131,6 +133,8 @@ export async function GET(request: Request) {
 
   const connectionsAsSupporter = asSupporterConnections.map((connection) => ({
     id: connection.id,
+    supporter_id: connection.supporter_id,
+    recovery_user_id: connection.recovery_user_id,
     status: connection.status,
     created_at: connection.created_at,
     accepted_at: connection.accepted_at,

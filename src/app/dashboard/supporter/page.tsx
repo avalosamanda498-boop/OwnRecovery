@@ -1,12 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
 import MoodTrendChart from '@/components/tracking/MoodTrendChart'
 import { RecentBadges } from '@/components/badges/RecentBadges'
 import { AdvisoryPanel } from '@/components/dashboard/AdvisoryPanel'
+import { EncouragementComposer } from '@/components/support/EncouragementComposer'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
+import { fetchConnectionsSummary, type ConnectionSummary } from '@/lib/connections'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
 import type { BadgeRecord } from '@/lib/badges'
 
@@ -16,6 +18,9 @@ export default function SupporterDashboardPage() {
   const [range, setRange] = useState<7 | 14 | 30>(7)
   const [badgeRefreshKey, setBadgeRefreshKey] = useState(0)
   const [latestBadges, setLatestBadges] = useState<BadgeRecord[]>([])
+  const [connections, setConnections] = useState<ConnectionSummary[]>([])
+  const [connectionsLoading, setConnectionsLoading] = useState(true)
+  const [connectionsError, setConnectionsError] = useState<string | null>(null)
 
   useEffect(() => {
     getCurrentUser().then((profile) => {
@@ -28,6 +33,25 @@ export default function SupporterDashboardPage() {
       .then(setHistory)
       .catch(() => setHistory([]))
   }, [range])
+
+  const refreshConnections = useCallback(() => {
+    setConnectionsLoading(true)
+    setConnectionsError(null)
+    fetchConnectionsSummary()
+      .then((summary) => {
+        const accepted = summary.asSupporter.filter((connection) => connection.status === 'accepted')
+        setConnections(accepted)
+      })
+      .catch((err: any) => {
+        setConnectionsError(err.message ?? 'We could not load your support circle.')
+        setConnections([])
+      })
+      .finally(() => setConnectionsLoading(false))
+  }, [])
+
+  useEffect(() => {
+    refreshConnections()
+  }, [refreshConnections])
 
   if (!user) {
     return (
@@ -88,6 +112,11 @@ export default function SupporterDashboardPage() {
           emptyMessage="Your first supporter badge appears after your next few reflections."
         />
 
+        <EncouragementComposer
+          connections={connections}
+          onSent={refreshConnections}
+        />
+
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
@@ -116,14 +145,45 @@ export default function SupporterDashboardPage() {
           <MoodTrendChart data={history} rangeLabel={`${range} days`} />
         </section>
 
-        <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900">Who you’re supporting</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            We’ll list the people connected to you here, with snapshots of how they’re doing (only what they choose to share), plus gentle reminders to check in.
-          </p>
-          <div className="mt-4 p-4 rounded-xl border border-dashed border-gray-300 text-sm text-gray-500">
-            Connection list coming soon. Have a code? You’ll be able to enter it right here to connect instantly.
+        <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-lg font-semibold text-gray-900">Who you’re supporting</h2>
+            <p className="text-sm text-gray-600">
+              Only shows people who invited you. We hide details they keep private, but you’ll know when to reach out.
+            </p>
           </div>
+
+          {connectionsLoading ? (
+            <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-success-500" />
+              Loading your support circle…
+            </div>
+          ) : connectionsError ? (
+            <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{connectionsError}</div>
+          ) : connections.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 py-4 text-sm text-gray-600">
+              No active connections yet. Ask your friend to share their invite code when they’re ready for encouragement.
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {connections.map((connection) => (
+                <li key={connection.id} className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
+                  <p className="font-semibold text-gray-900">
+                    {connection.partner.prefers_anonymous
+                      ? 'Anonymous friend'
+                      : connection.partner.display_name || 'Recovery partner'}
+                  </p>
+                  {connection.relationship_note && <p className="mt-1 text-gray-600">{connection.relationship_note}</p>}
+                  <p className="mt-1 text-xs text-gray-500">
+                    Connected{' '}
+                    {new Date(connection.created_at).toLocaleString(undefined, {
+                      dateStyle: 'medium',
+                    })}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         <section className="grid md:grid-cols-2 gap-6">

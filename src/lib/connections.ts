@@ -6,6 +6,8 @@ export interface ConnectionParticipant {
 
 export interface ConnectionSummary {
   id: string
+  supporter_id: string
+  recovery_user_id: string
   status: 'pending' | 'accepted' | 'declined'
   created_at: string
   accepted_at?: string | null
@@ -32,25 +34,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
   throw new Error(message?.error ?? 'We could not complete that request right now.')
 }
 
-import { supabase } from '@/lib/supabase'
-
-async function authedFetch(input: RequestInfo | URL, init: RequestInit = {}) {
-  const { data: sessionData } = await supabase.auth.getSession()
-  const token = sessionData.session?.access_token
-
-  const headers = new Headers(init.headers ?? {})
-  headers.set('Content-Type', 'application/json')
-
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`)
-  }
-
-  return fetch(input, {
-    ...init,
-    headers,
-    credentials: 'include',
-  })
-}
+import { authedFetch } from '@/lib/authedFetch'
 
 export async function fetchConnectionsSummary(): Promise<ConnectionListResponse> {
   const response = await authedFetch('/api/connections/list', {

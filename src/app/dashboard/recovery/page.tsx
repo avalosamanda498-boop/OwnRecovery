@@ -11,6 +11,7 @@ import { getCurrentUser, type AuthUser } from '@/lib/auth'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
 import { fetchRecoveryStreak } from '@/lib/streaks'
 import type { BadgeRecord } from '@/lib/badges'
+import { SupportMessagesFeed } from '@/components/support/SupportMessagesFeed'
 
 export default function RecoveryDashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
@@ -95,6 +96,8 @@ export default function RecoveryDashboardPage() {
         )}
 
         <RecentBadges refreshKey={badgeRefreshKey} latestBadges={latestBadges} />
+
+        <SupportMessagesFeed />
 
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">

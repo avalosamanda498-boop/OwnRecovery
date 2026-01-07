@@ -28,6 +28,8 @@ Own Recovery is a medical-AI-inspired, human-in-the-loop digital companion that 
 
 - **Family & Supporter Engagement**  
   Invitation codes or email invites connect supporters, with privacy controls that keep ownership with the person in recovery.
+- **Encouragement Messaging**  
+  Supporters can send brief, advisory notes that stay in-app, respecting the recovery member’s privacy choices.
 
 - **Crisis Support**  
   Always-on “Help Now” button and smart keyword detection to surface hotlines immediately—without panic, always clear and calm.
@@ -46,7 +48,7 @@ Own Recovery is a medical-AI-inspired, human-in-the-loop digital companion that 
 
 - Phase 2 completed: Mood + craving logging, streaks, charts, and badge celebrations.
 - Phase 3 in progress: Supporter connections, privacy controls, encouragement flows, and resource library scaffolding.
-  - New this iteration: advisory alerts, stress/sleep logging, anonymous mode toggle, privacy sharing toggles, in-app data deletion, and invite-code based support circles with removal controls.
+  - New this iteration: advisory alerts, stress/sleep logging, anonymous mode toggle, privacy sharing toggles, in-app data deletion, invite-code based support circles with removal controls, and in-app encouragement messaging with safe presets.
 - Phase 4 upcoming: Crisis keyword detection with human escalation, weekly summaries, and admin oversight for flagged events (always respecting RLS in Supabase).
 
 ## 🛠️ Tech Stack
