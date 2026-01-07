@@ -6,17 +6,22 @@ import MoodCravingLogger from '@/components/tracking/MoodCravingLogger'
 import MoodTrendChart from '@/components/tracking/MoodTrendChart'
 import { AdvisoryPanel } from '@/components/dashboard/AdvisoryPanel'
 import { EncouragementComposer } from '@/components/support/EncouragementComposer'
+import { SupporterConnectionCard } from '@/components/support/SupporterConnectionCard'
 import { getCurrentUser, type AuthUser } from '@/lib/auth'
-import { fetchConnectionsSummary, type ConnectionSummary } from '@/lib/connections'
 import { fetchMoodHistory, type MoodHistoryPoint } from '@/lib/moodEntries'
+import {
+  fetchSupporterConnectionInsights,
+  type SupporterConnectionInsight,
+} from '@/lib/supporterInsights'
 
 export default function SupporterDashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [history, setHistory] = useState<MoodHistoryPoint[]>([])
   const [range, setRange] = useState<7 | 14 | 30>(7)
-  const [connections, setConnections] = useState<ConnectionSummary[]>([])
-  const [connectionsLoading, setConnectionsLoading] = useState(true)
-  const [connectionsError, setConnectionsError] = useState<string | null>(null)
+  const [insights, setInsights] = useState<SupporterConnectionInsight[]>([])
+  const [insightsLoading, setInsightsLoading] = useState(true)
+  const [insightsError, setInsightsError] = useState<string | null>(null)
+  const [selectedRecipient, setSelectedRecipient] = useState<string | null>(null)
 
   useEffect(() => {
     getCurrentUser().then((profile) => {
@@ -30,24 +35,35 @@ export default function SupporterDashboardPage() {
       .catch(() => setHistory([]))
   }, [range])
 
-  const refreshConnections = useCallback(() => {
-    setConnectionsLoading(true)
-    setConnectionsError(null)
-    fetchConnectionsSummary()
-      .then((summary) => {
-        const accepted = summary.asSupporter.filter((connection) => connection.status === 'accepted')
-        setConnections(accepted)
+  const loadInsights = useCallback(() => {
+    setInsightsLoading(true)
+    setInsightsError(null)
+    fetchSupporterConnectionInsights()
+      .then((data) => {
+        setInsights(data)
+        setSelectedRecipient((current) => {
+          if (data.length === 0) {
+            return null
+          }
+          if (!current) {
+            return data[0].recovery_user_id
+          }
+          return data.some((item) => item.recovery_user_id === current)
+            ? current
+            : data[0].recovery_user_id
+        })
       })
       .catch((err: any) => {
-        setConnectionsError(err.message ?? 'We could not load your support circle.')
-        setConnections([])
+        setInsightsError(err.message ?? 'We could not load your support circle.')
+        setInsights([])
+        setSelectedRecipient(null)
       })
-      .finally(() => setConnectionsLoading(false))
+      .finally(() => setInsightsLoading(false))
   }, [])
 
   useEffect(() => {
-    refreshConnections()
-  }, [refreshConnections])
+    loadInsights()
+  }, [loadInsights])
 
   if (!user) {
     return (
@@ -99,8 +115,13 @@ export default function SupporterDashboardPage() {
         <AdvisoryPanel range={7} />
 
         <EncouragementComposer
-          connections={connections}
-          onSent={refreshConnections}
+          connections={insights.map((connection) => ({
+            recovery_user_id: connection.recovery_user_id,
+            display_name: connection.display_name,
+            prefers_anonymous: connection.prefers_anonymous,
+          }))}
+          initialRecoveryUserId={selectedRecipient}
+          onSent={loadInsights}
         />
 
         <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -148,33 +169,25 @@ export default function SupporterDashboardPage() {
             </p>
           </div>
 
-          {connectionsLoading ? (
+          {insightsLoading ? (
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-success-500" />
               Loading your support circle…
             </div>
-          ) : connectionsError ? (
-            <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{connectionsError}</div>
-          ) : connections.length === 0 ? (
+          ) : insightsError ? (
+            <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{insightsError}</div>
+          ) : insights.length === 0 ? (
             <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 py-4 text-sm text-gray-600">
               No active connections yet. Ask your friend to share their invite code when they’re ready for encouragement.
             </div>
           ) : (
             <ul className="space-y-3">
-              {connections.map((connection) => (
-                <li key={connection.id} className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
-                  <p className="font-semibold text-gray-900">
-                    {connection.partner.prefers_anonymous
-                      ? 'Anonymous friend'
-                      : connection.partner.display_name || 'Recovery partner'}
-                  </p>
-                  {connection.relationship_note && <p className="mt-1 text-gray-600">{connection.relationship_note}</p>}
-                  <p className="mt-1 text-xs text-gray-500">
-                    Connected{' '}
-                    {new Date(connection.created_at).toLocaleString(undefined, {
-                      dateStyle: 'medium',
-                    })}
-                  </p>
+              {insights.map((connection) => (
+                <li key={connection.connection_id}>
+                  <SupporterConnectionCard
+                    insight={connection}
+                    onSendEncouragement={(recoveryUserId) => setSelectedRecipient(recoveryUserId)}
+                  />
                 </li>
               ))}
             </ul>

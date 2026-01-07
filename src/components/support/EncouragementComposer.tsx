@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { ConnectionSummary } from '@/lib/connections'
 import { sendEncouragement } from '@/lib/supportMessages'
 
 const PRESET_MESSAGES = [
@@ -13,20 +12,33 @@ const PRESET_MESSAGES = [
 
 const PRESET_EMOJIS = ['🙌', '❤️', '💪', '🌟', '🌱', '🤝'] as const
 
+interface EncouragementRecipient {
+  recovery_user_id: string
+  display_name: string
+  prefers_anonymous: boolean
+}
+
 interface EncouragementComposerProps {
-  connections: ConnectionSummary[]
+  connections: EncouragementRecipient[]
+  initialRecoveryUserId?: string | null
   onSent?: () => void
 }
 
-export function EncouragementComposer({ connections, onSent }: EncouragementComposerProps) {
+export function EncouragementComposer({ connections, initialRecoveryUserId, onSent }: EncouragementComposerProps) {
   const [selectedRecoveryUserId, setSelectedRecoveryUserId] = useState<string>(
-    connections[0]?.recovery_user_id ?? ''
+    initialRecoveryUserId ?? connections[0]?.recovery_user_id ?? ''
   )
   const [message, setMessage] = useState('')
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null)
   const [emoji, setEmoji] = useState<string | null>(null)
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (initialRecoveryUserId && connections.some((connection) => connection.recovery_user_id === initialRecoveryUserId)) {
+      setSelectedRecoveryUserId(initialRecoveryUserId)
+    }
+  }, [initialRecoveryUserId, connections])
 
   useEffect(() => {
     if (selectedRecoveryUserId) {
@@ -109,10 +121,8 @@ export function EncouragementComposer({ connections, onSent }: EncouragementComp
               className="input-field"
             >
               {connections.map((connection) => (
-                <option key={connection.id} value={connection.recovery_user_id}>
-                  {connection.partner.prefers_anonymous
-                    ? 'Anonymous friend'
-                    : connection.partner.display_name || 'Recovery partner'}
+                <option key={connection.recovery_user_id} value={connection.recovery_user_id}>
+                  {connection.prefers_anonymous ? 'Anonymous friend' : connection.display_name || 'Recovery partner'}
                 </option>
               ))}
             </select>
