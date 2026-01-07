@@ -11,6 +11,9 @@ export interface AuthUser {
   user_type?: UserType
   sobriety_start_date?: string | null
   prefers_anonymous?: boolean
+  pending_support_invite_code?: string | null
+  pending_support_invite_expires_at?: string | null
+  last_support_invite_generated_at?: string | null
 }
 
 export async function signUp(email: string, password: string, fullName: string) {
@@ -53,7 +56,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
   const { data: profileRows, error: selectError } = await supabase
     .from('users')
-    .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type, sobriety_start_date, prefers_anonymous')
+    .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, pending_support_invite_expires_at, last_support_invite_generated_at, user_type, sobriety_start_date, prefers_anonymous')
     .eq('id', user.id)
     .limit(1)
 
@@ -86,12 +89,15 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
         full_name: user.user_metadata?.full_name ?? null,
         is_admin: false,
         onboarding_completed: false,
+        pending_support_invite_code: null,
+        pending_support_invite_expires_at: null,
+        last_support_invite_generated_at: null,
       }
     }
 
     const { data: newProfileRows, error: refetchError } = await supabase
       .from('users')
-      .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, user_type, sobriety_start_date, prefers_anonymous')
+      .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, pending_support_invite_expires_at, last_support_invite_generated_at, user_type, sobriety_start_date, prefers_anonymous')
       .eq('id', user.id)
       .limit(1)
 
@@ -112,6 +118,9 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     user_type: (profile?.user_type as UserType) || 'regular',
     sobriety_start_date: profile?.sobriety_start_date || null,
     prefers_anonymous: profile?.prefers_anonymous ?? false,
+    pending_support_invite_code: profile?.pending_support_invite_code ?? null,
+    pending_support_invite_expires_at: profile?.pending_support_invite_expires_at ?? null,
+    last_support_invite_generated_at: profile?.last_support_invite_generated_at ?? null,
   }
 }
 
@@ -135,6 +144,8 @@ export async function updateUserProfile(userId: string, updates: {
   onboarding_completed?: boolean
   support_relationship?: string
   pending_support_invite_code?: string | null
+  pending_support_invite_expires_at?: string | null
+  last_support_invite_generated_at?: string | null
   user_type?: UserType
   is_admin?: boolean
   notification_preferences?: {

@@ -17,11 +17,15 @@ export interface User {
   check_in_time?: string
   stage_of_change?: string
   onboarding_completed?: boolean
+  last_mood_log_at?: string
+  last_support_action_at?: string
   
   // Supporter-specific fields
   connected_users?: string[]
   support_relationship?: string
   pending_support_invite_code?: string
+  pending_support_invite_expires_at?: string
+  last_support_invite_generated_at?: string
   user_type?: UserType
   
   // Shared fields
@@ -32,6 +36,7 @@ export interface User {
     supporter_messages: boolean
   }
   prefers_anonymous?: boolean
+  is_admin?: boolean
 }
 
 export interface MoodEntry {
@@ -74,6 +79,7 @@ export interface UserConnection {
   status: 'pending' | 'accepted' | 'declined'
   created_at: string
   accepted_at?: string
+  relationship_note?: string
 }
 
 export interface Resource {

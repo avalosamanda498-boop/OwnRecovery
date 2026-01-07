@@ -54,11 +54,14 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS stage_of_change TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN DEFAULT false;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS support_relationship TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS pending_support_invite_code TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS pending_support_invite_expires_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_support_invite_generated_at TIMESTAMP WITH TIME ZONE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT false;
 ALTER TABLE users ALTER COLUMN role DROP NOT NULL;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS user_type TEXT DEFAULT 'regular';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_mood_log_at DATE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_support_action_at DATE;
+CREATE INDEX IF NOT EXISTS idx_users_pending_support_invite_code ON users(pending_support_invite_code);
 
 -- Phase 2 mood & craving tracking
 CREATE TABLE IF NOT EXISTS public.mood_entries (
@@ -122,6 +125,9 @@ ALTER TABLE public.mood_entries
   ADD COLUMN IF NOT EXISTS sleep_quality TEXT CHECK (sleep_quality IN ('rested', 'okay', 'poor')),
   ADD COLUMN IF NOT EXISTS stress_trigger TEXT;
 
+ALTER TABLE public.user_connections
+  ADD COLUMN IF NOT EXISTS relationship_note TEXT;
+
 -- Allow users to opt into anonymous mode
 ALTER TABLE public.users
   ADD COLUMN IF NOT EXISTS prefers_anonymous BOOLEAN DEFAULT false;
@@ -147,3 +153,7 @@ CREATE POLICY "Users can delete own badges" ON public.badges
 
 CREATE POLICY "Users can update own badges" ON public.badges
   FOR UPDATE USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can delete connections they are part of" ON public.user_connections;
+CREATE POLICY "Users can delete connections they are part of" ON public.user_connections
+  FOR DELETE USING (auth.uid() = supporter_id OR auth.uid() = recovery_user_id);

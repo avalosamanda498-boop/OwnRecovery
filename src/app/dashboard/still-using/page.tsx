@@ -54,12 +54,20 @@ export default function StillUsingDashboardPage() {
                 This space grows with you. We’ll surface gentle prompts, coping ideas, and real stories whenever you’re ready.
               </p>
             </div>
-            <Link
-              href="/dashboard/settings"
-              className="inline-flex items-center gap-2 rounded-full border border-secondary-200 bg-secondary-50 px-4 py-2 text-sm font-medium text-secondary-700 shadow-sm transition hover:bg-secondary-100"
-            >
-              Privacy &amp; data controls
-            </Link>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Link
+                href="/dashboard/connections"
+                className="inline-flex items-center gap-2 rounded-full border border-secondary-200 bg-secondary-50 px-4 py-2 text-sm font-medium text-secondary-700 shadow-sm transition hover:bg-secondary-100"
+              >
+                Support circle
+              </Link>
+              <Link
+                href="/dashboard/settings"
+                className="inline-flex items-center gap-2 rounded-full border border-secondary-200 bg-secondary-50 px-4 py-2 text-sm font-medium text-secondary-700 shadow-sm transition hover:bg-secondary-100"
+              >
+                Privacy &amp; data controls
+              </Link>
+            </div>
           </div>
         </header>
 

@@ -48,12 +48,20 @@ export default function SupporterDashboardPage() {
                 This dashboard will soon track everyone you’re supporting, share encouragement prompts, and surface resources just for loved ones and allies.
               </p>
             </div>
-            <Link
-              href="/dashboard/settings"
-              className="inline-flex items-center gap-2 rounded-full border border-success-200 bg-success-50 px-4 py-2 text-sm font-medium text-success-700 shadow-sm transition hover:bg-success-100"
-            >
-              Privacy &amp; data controls
-            </Link>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Link
+                href="/dashboard/connections"
+                className="inline-flex items-center gap-2 rounded-full border border-success-200 bg-success-50 px-4 py-2 text-sm font-medium text-success-700 shadow-sm transition hover:bg-success-100"
+              >
+                Support circle
+              </Link>
+              <Link
+                href="/dashboard/settings"
+                className="inline-flex items-center gap-2 rounded-full border border-success-200 bg-success-50 px-4 py-2 text-sm font-medium text-success-700 shadow-sm transition hover:bg-success-100"
+              >
+                Privacy &amp; data controls
+              </Link>
+            </div>
           </div>
         </header>
 
@@ -143,7 +151,7 @@ export default function SupporterDashboardPage() {
         </section>
 
         <footer className="text-center text-sm text-gray-500">
-          Placeholder dashboar — more features arriving in the next milestone.
+          Placeholder dashboard — more features arriving in the next milestone.
         </footer>
       </div>
     </div>

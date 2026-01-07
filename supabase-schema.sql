@@ -14,7 +14,7 @@ CREATE TABLE users (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     full_name VARCHAR(255) NOT NULL,
-    role user_role NOT NULL,
+    role user_role,
     avatar_url TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -24,6 +24,16 @@ CREATE TABLE users (
     primary_substance VARCHAR(100),
     biggest_challenge TEXT,
     check_in_time TIME,
+    stage_of_change TEXT,
+    onboarding_completed BOOLEAN DEFAULT false,
+    support_relationship TEXT,
+    last_mood_log_at DATE,
+    last_support_action_at DATE,
+    
+    -- Supporter connection fields
+    pending_support_invite_code TEXT,
+    pending_support_invite_expires_at TIMESTAMP WITH TIME ZONE,
+    last_support_invite_generated_at TIMESTAMP WITH TIME ZONE,
     
     -- Shared fields
     timezone VARCHAR(50) DEFAULT 'UTC',
@@ -32,7 +42,9 @@ CREATE TABLE users (
         "milestone_celebrations": true,
         "supporter_messages": true
     }'::jsonb,
-    prefers_anonymous BOOLEAN DEFAULT false
+    prefers_anonymous BOOLEAN DEFAULT false,
+    is_admin BOOLEAN DEFAULT false,
+    user_type TEXT DEFAULT 'regular'
 );
 
 -- Mood entries table
@@ -79,6 +91,7 @@ CREATE TABLE user_connections (
     status connection_status DEFAULT 'pending',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     accepted_at TIMESTAMP WITH TIME ZONE,
+    relationship_note TEXT,
     UNIQUE(supporter_id, recovery_user_id)
 );
 
@@ -115,6 +128,9 @@ CREATE INDEX idx_support_messages_to_user_id ON support_messages(to_user_id);
 CREATE INDEX idx_support_messages_from_user_id ON support_messages(from_user_id);
 CREATE INDEX idx_user_connections_supporter_id ON user_connections(supporter_id);
 CREATE INDEX idx_user_connections_recovery_user_id ON user_connections(recovery_user_id);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX idx_users_pending_support_invite_code ON users(pending_support_invite_code);
 CREATE INDEX idx_ai_interactions_user_id ON ai_interactions(user_id);
 
 -- Create updated_at trigger function
@@ -194,6 +210,9 @@ CREATE POLICY "Users can create connections as supporter" ON user_connections
 
 CREATE POLICY "Recovery users can update connection status" ON user_connections
     FOR UPDATE USING (auth.uid() = recovery_user_id);
+
+CREATE POLICY "Users can delete connections they are part of" ON user_connections
+    FOR DELETE USING (auth.uid() = supporter_id OR auth.uid() = recovery_user_id);
 
 -- Resources are public (read-only for users)
 CREATE POLICY "Anyone can view resources" ON resources

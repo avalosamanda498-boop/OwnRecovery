@@ -46,7 +46,7 @@ Own Recovery is a medical-AI-inspired, human-in-the-loop digital companion that 
 
 - Phase 2 completed: Mood + craving logging, streaks, charts, and badge celebrations.
 - Phase 3 in progress: Supporter connections, privacy controls, encouragement flows, and resource library scaffolding.
-  - New this iteration: advisory alerts, stress/sleep logging, anonymous mode toggle, and in-app data deletion.
+  - New this iteration: advisory alerts, stress/sleep logging, anonymous mode toggle, in-app data deletion, and invite-code based support circles with removal controls.
 - Phase 4 upcoming: Crisis keyword detection with human escalation, weekly summaries, and admin oversight for flagged events (always respecting RLS in Supabase).
 
 ## 🛠️ Tech Stack
