@@ -54,6 +54,8 @@ CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE INDEX IF NOT EXISTS idx_users_is_admin ON users(is_admin);
 
 -- Phase 1 onboarding enhancements
+ALTER TABLE users ALTER COLUMN email DROP NOT NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS stage_of_change TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN DEFAULT false;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS support_relationship TEXT;

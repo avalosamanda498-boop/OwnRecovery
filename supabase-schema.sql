@@ -12,7 +12,8 @@ CREATE TYPE interaction_type AS ENUM ('check_in', 'recommendation', 'crisis_dete
 -- Users table
 CREATE TABLE users (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    phone TEXT,
     full_name VARCHAR(255) NOT NULL,
     role user_role,
     avatar_url TEXT,

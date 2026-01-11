@@ -3,12 +3,16 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { signUp } from '@/lib/auth'
-import { supabase } from '@/lib/supabase'
+import { signUpWithEmail, signUpWithPhone, verifyPhoneOtp, syncProfileFromSession } from '@/lib/auth'
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [mode, setMode] = useState<'email' | 'phone'>('email')
+  const [phone, setPhone] = useState('')
+  const [otpCode, setOtpCode] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
+  const [normalizedPhone, setNormalizedPhone] = useState<string | null>(null)
   const [fullName, setFullName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -20,28 +24,36 @@ export default function SignUpPage() {
     setError('')
 
     try {
-      const { user } = await signUp(email, password, fullName)
+      if (mode === 'email') {
+        const { user } = await signUpWithEmail(email, password, fullName)
 
-      if (user) {
-        const profilePayload = {
-          id: user.id,
-          email,
-          full_name: fullName,
-          user_type: 'regular' as const,
-          is_admin: false,
-          updated_at: new Date().toISOString(),
+        if (!user) {
+          setError('Check your email to complete sign up.')
+          return
         }
 
-        const { error: profileError } = await supabase
-          .from('users')
-          .upsert(profilePayload, { onConflict: 'id' })
-
-        if (profileError) {
-          throw profileError
-        }
-
+        await syncProfileFromSession()
         router.replace('/auth/role-selection?welcome=1')
+        return
       }
+
+      if (!otpSent) {
+        const { phone: normalized } = await signUpWithPhone(phone, fullName)
+        setNormalizedPhone(normalized)
+        setOtpSent(true)
+        setLoading(false)
+        return
+      }
+
+      if (!normalizedPhone) {
+        setError('Phone verification session expired. Please request a new code.')
+        setOtpSent(false)
+        return
+      }
+
+      await verifyPhoneOtp(normalizedPhone, otpCode.trim())
+      await syncProfileFromSession()
+      router.replace('/auth/role-selection?welcome=1')
     } catch (err: any) {
       setError(err.message || 'An error occurred during signup')
     } finally {
@@ -61,7 +73,39 @@ export default function SignUpPage() {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <div className="flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setMode('email')
+              setOtpSent(false)
+              setError('')
+            }}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+              mode === 'email'
+                ? 'bg-primary-600 text-white shadow-sm'
+                : 'bg-white text-primary-600 border border-primary-200'
+            }`}
+          >
+            Use email
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setMode('phone')
+              setError('')
+            }}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+              mode === 'phone'
+                ? 'bg-primary-600 text-white shadow-sm'
+                : 'bg-white text-primary-600 border border-primary-200'
+            }`}
+          >
+            Use phone
+          </button>
+        </div>
+
+        <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
@@ -79,38 +123,77 @@ export default function SignUpPage() {
               />
             </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email Address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-field mt-1"
-                placeholder="Enter your email"
-              />
-            </div>
+            {mode === 'email' ? (
+              <>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Email Address
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="input-field mt-1"
+                    placeholder="Enter your email"
+                  />
+                </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-field mt-1"
-                placeholder="Create a password"
-                minLength={6}
-              />
-            </div>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="input-field mt-1"
+                    placeholder="Create a password"
+                    minLength={6}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                    Phone number
+                  </label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="input-field mt-1"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+                {otpSent && (
+                  <div>
+                    <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
+                      Verification code
+                    </label>
+                    <input
+                      id="otp"
+                      name="otp"
+                      type="text"
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value)}
+                      className="input-field mt-1"
+                      placeholder="Enter the code sent to your phone"
+                      required
+                    />
+                  </div>
+                )}
+              </>
+            )}
 
             <p className="text-xs text-gray-500">
               After you create your account, we’ll help you choose whether you’re in recovery, thinking about change, or supporting someone.
@@ -129,7 +212,17 @@ export default function SignUpPage() {
               disabled={loading}
               className="btn-primary w-full"
             >
-              {loading ? 'Creating Account...' : 'Create Account'}
+              {mode === 'email'
+                ? loading
+                  ? 'Creating Account...'
+                  : 'Create Account'
+                : otpSent
+                ? loading
+                  ? 'Verifying...'
+                  : 'Verify code'
+                : loading
+                ? 'Sending code...'
+                : 'Send code'}
             </button>
           </div>
 

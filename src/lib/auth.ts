@@ -3,7 +3,7 @@ import { UserRole, UserType, type PrivacySettings } from '@/types/database'
 
 export interface AuthUser {
   id: string
-  email: string
+  email: string | null
   role: UserRole | null
   full_name: string | null
   is_admin: boolean
@@ -17,7 +17,7 @@ export interface AuthUser {
   privacy_settings?: PrivacySettings
 }
 
-export async function signUp(email: string, password: string, fullName: string) {
+export async function signUpWithEmail(email: string, password: string, fullName: string) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -32,19 +32,50 @@ export async function signUp(email: string, password: string, fullName: string) 
   return data
 }
 
-export async function signIn(identifier: string, password: string) {
-  const trimmed = identifier.trim()
-  const isEmail = trimmed.includes('@')
-  const cleaned = trimmed.replace(/\s+/g, '')
+export async function signUpWithPhone(phone: string, fullName: string) {
+  const normalized = normalizePhone(phone)
+  const { data, error } = await supabase.auth.signInWithOtp({
+    phone: normalized,
+    options: {
+      data: { full_name: fullName },
+      shouldCreateUser: true,
+    },
+  })
 
-  const payload = isEmail
-    ? { email: cleaned, password }
-    : { phone: normalizePhone(cleaned), password }
+  if (error) throw error
+  return { data, phone: normalized }
+}
 
-  const { data, error } = await supabase.auth.signInWithPassword(payload as any)
+export async function verifyPhoneOtp(phone: string, token: string) {
+  const normalized = normalizePhone(phone)
+  const { data, error } = await supabase.auth.verifyOtp({
+    phone: normalized,
+    token,
+    type: 'sms',
+  })
 
   if (error) throw error
   return data
+}
+
+export async function signInWithEmail(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+
+  if (error) throw error
+  return data
+}
+
+export async function sendPhoneOtp(phone: string) {
+  const normalized = normalizePhone(phone)
+  const { data, error } = await supabase.auth.signInWithOtp({
+    phone: normalized,
+  })
+
+  if (error) throw error
+  return { data, phone: normalized }
 }
 
 export async function signOut() {
@@ -79,8 +110,9 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     profile =
       (await ensureUserProfile({
         id: user.id,
-        email: user.email ?? '',
+        email: user.email ?? null,
         full_name: user.user_metadata?.full_name ?? null,
+        phone: user.phone ?? null,
         user_type: 'regular',
         prefers_anonymous: false,
       })) ?? null
@@ -88,7 +120,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
   return {
     id: user.id,
-    email: user.email!,
+    email: user.email ?? null,
     role: profile?.role || null,
     full_name: profile?.full_name || null,
     is_admin: profile?.is_admin || false,
@@ -159,6 +191,7 @@ async function ensureUserProfile(payload: {
   id: string
   email?: string | null
   full_name?: string | null
+  phone?: string | null
   user_type?: UserType
   prefers_anonymous?: boolean
 }) {
@@ -166,16 +199,15 @@ async function ensureUserProfile(payload: {
     data: { user },
   } = await supabase.auth.getUser()
 
-  let email = payload.email ?? user?.email ?? user?.phone ?? ''
-  if (!email) {
-    email = `user-${payload.id}@placeholder.local`
-  }
+  const email = payload.email ?? user?.email ?? null
+  const phone = payload.phone ?? user?.phone ?? null
 
   const fullName = payload.full_name ?? (user?.user_metadata?.full_name as string | null) ?? null
 
   const base = pruneUndefined({
     id: payload.id,
     email,
+    phone,
     full_name: fullName,
     user_type: payload.user_type ?? 'regular',
     prefers_anonymous: payload.prefers_anonymous ?? false,
@@ -196,6 +228,22 @@ async function ensureUserProfile(payload: {
   }
 
   return data
+}
+
+export async function syncProfileFromSession() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) return null
+
+  return ensureUserProfile({
+    id: user.id,
+    email: user.email ?? null,
+    phone: user.phone ?? null,
+    full_name: (user.user_metadata?.full_name as string | null) ?? null,
+    user_type: 'regular',
+  })
 }
 
 function normalizePhone(input: string) {
