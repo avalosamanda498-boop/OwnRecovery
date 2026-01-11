@@ -50,6 +50,7 @@ export default function SupporterOnboardingPage() {
 
     try {
       await updateUserProfile(userId, {
+        role: 'supporter',
         support_relationship: relationship,
         onboarding_completed: true,
         pending_support_invite_code: inviteCode.trim() ? inviteCode.trim() : null,
@@ -61,7 +62,7 @@ export default function SupporterOnboardingPage() {
       })
 
       setSuccess('Great! We’ll keep you in the loop.')
-      router.push('/dashboard')
+      router.replace('/dashboard/supporter')
     } catch (err: any) {
       setError(err.message || 'Something went wrong while saving your information.')
     } finally {

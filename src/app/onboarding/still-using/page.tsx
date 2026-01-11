@@ -60,6 +60,7 @@ export default function StillUsingOnboardingPage() {
         biggest_challenge: biggestChallenge,
         check_in_time: checkInTime,
         onboarding_completed: true,
+        role: 'still_using',
       })
 
       setSuccess('Thanks! Your preferences are saved.')

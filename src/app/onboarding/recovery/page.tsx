@@ -48,6 +48,7 @@ export default function RecoveryOnboardingPage() {
 
     try {
       await updateUserProfile(userId, {
+        role: 'recovery',
         primary_substance: primarySubstance,
         sobriety_start_date: sobrietyStartDate || undefined,
         biggest_challenge: biggestChallenge,
@@ -56,7 +57,7 @@ export default function RecoveryOnboardingPage() {
       })
 
       setSuccess('Thanks! Your preferences are saved.')
-      router.push('/dashboard')
+      router.replace('/dashboard/recovery')
     } catch (err: any) {
       setError(err.message || 'Something went wrong while saving your information.')
     } finally {
