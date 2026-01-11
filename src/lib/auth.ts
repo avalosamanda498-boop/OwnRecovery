@@ -104,6 +104,8 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 }
 
 export async function updateUserRole(userId: string, role: UserRole) {
+  await ensureUserProfile({ id: userId })
+
   const { error } = await supabase
     .from('users')
     .upsert({ id: userId, role, updated_at: new Date().toISOString() }, { onConflict: 'id' })
@@ -134,6 +136,8 @@ export async function updateUserProfile(userId: string, updates: {
   prefers_anonymous?: boolean
   privacy_settings?: PrivacySettings
 }) {
+  await ensureUserProfile({ id: userId })
+
   const payload = {
     id: userId,
     ...pruneUndefined(updates),
@@ -158,8 +162,23 @@ async function ensureUserProfile(payload: {
   user_type?: UserType
   prefers_anonymous?: boolean
 }) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let email = payload.email ?? user?.email ?? user?.phone ?? ''
+  if (!email) {
+    email = `user-${payload.id}@placeholder.local`
+  }
+
+  const fullName = payload.full_name ?? (user?.user_metadata?.full_name as string | null) ?? null
+
   const base = pruneUndefined({
-    ...payload,
+    id: payload.id,
+    email,
+    full_name: fullName,
+    user_type: payload.user_type ?? 'regular',
+    prefers_anonymous: payload.prefers_anonymous ?? false,
     updated_at: new Date().toISOString(),
   })
 
