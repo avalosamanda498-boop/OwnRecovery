@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -13,7 +13,8 @@ import {
 import { Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
-  const [mode, setMode] = useState<'email' | 'phone'>('email')
+  const phoneAuthEnabled = useMemo(() => process.env.NEXT_PUBLIC_ENABLE_PHONE_AUTH === 'true', [])
+  const [mode, setMode] = useState<'email' | 'phone'>(phoneAuthEnabled ? 'email' : 'email')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -31,7 +32,7 @@ export default function LoginPage() {
     setError('')
 
     try {
-      if (mode === 'email') {
+      if (mode === 'email' || !phoneAuthEnabled) {
         const { user } = await signInWithEmail(email, password)
 
         if (user) {
@@ -46,6 +47,11 @@ export default function LoginPage() {
             router.push('/auth/role-selection')
           }
         }
+        return
+      }
+
+      if (!phoneAuthEnabled) {
+        setError('Phone login is not available right now.')
         return
       }
 
@@ -108,25 +114,27 @@ export default function LoginPage() {
           >
             Use email
           </button>
-          <button
-            type="button"
-            onClick={() => {
-              setMode('phone')
-              setError('')
-            }}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-              mode === 'phone'
-                ? 'bg-primary-600 text-white shadow-sm'
-                : 'bg-white text-primary-600 border border-primary-200'
-            }`}
-          >
-            Use phone
-          </button>
+          {phoneAuthEnabled && (
+            <button
+              type="button"
+              onClick={() => {
+                setMode('phone')
+                setError('')
+              }}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                mode === 'phone'
+                  ? 'bg-primary-600 text-white shadow-sm'
+                  : 'bg-white text-primary-600 border border-primary-200'
+              }`}
+            >
+              Use phone
+            </button>
+          )}
         </div>
 
         <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
-            {mode === 'email' ? (
+            {mode === 'email' || !phoneAuthEnabled ? (
               <>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700">

@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signUpWithEmail, signUpWithPhone, verifyPhoneOtp, syncProfileFromSession } from '@/lib/auth'
 
 export default function SignUpPage() {
+  const phoneAuthEnabled = useMemo(() => process.env.NEXT_PUBLIC_ENABLE_PHONE_AUTH === 'true', [])
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [mode, setMode] = useState<'email' | 'phone'>('email')
+  const [mode, setMode] = useState<'email' | 'phone'>(phoneAuthEnabled ? 'email' : 'email')
   const [phone, setPhone] = useState('')
   const [otpCode, setOtpCode] = useState('')
   const [otpSent, setOtpSent] = useState(false)
@@ -24,7 +25,7 @@ export default function SignUpPage() {
     setError('')
 
     try {
-      if (mode === 'email') {
+      if (mode === 'email' || !phoneAuthEnabled) {
         const { user } = await signUpWithEmail(email, password, fullName)
 
         if (!user) {
@@ -34,6 +35,11 @@ export default function SignUpPage() {
 
         await syncProfileFromSession()
         router.replace('/auth/role-selection?welcome=1')
+        return
+      }
+
+      if (!phoneAuthEnabled) {
+        setError('Phone sign up is not available right now.')
         return
       }
 
@@ -89,20 +95,22 @@ export default function SignUpPage() {
           >
             Use email
           </button>
-          <button
-            type="button"
-            onClick={() => {
-              setMode('phone')
-              setError('')
-            }}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-              mode === 'phone'
-                ? 'bg-primary-600 text-white shadow-sm'
-                : 'bg-white text-primary-600 border border-primary-200'
-            }`}
-          >
-            Use phone
-          </button>
+          {phoneAuthEnabled && (
+            <button
+              type="button"
+              onClick={() => {
+                setMode('phone')
+                setError('')
+              }}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                mode === 'phone'
+                  ? 'bg-primary-600 text-white shadow-sm'
+                  : 'bg-white text-primary-600 border border-primary-200'
+              }`}
+            >
+              Use phone
+            </button>
+          )}
         </div>
 
         <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
@@ -123,7 +131,7 @@ export default function SignUpPage() {
               />
             </div>
 
-            {mode === 'email' ? (
+            {mode === 'email' || !phoneAuthEnabled ? (
               <>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700">
