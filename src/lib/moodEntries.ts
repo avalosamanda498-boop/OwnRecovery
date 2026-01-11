@@ -94,16 +94,7 @@ export async function createMoodEntry({
     throw new Error('Trigger descriptions must be 120 characters or fewer.')
   }
 
-  let profileRow: { id: string; role: string | null } | null = null
-  let profileError: any = null
-  const { data: profileData, error: profileFetchError } = await supabase
-    .from('users')
-    .select('id, role')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  profileRow = profileData
-  profileError = profileFetchError
+  const { data: profileData, error: profileError } = await supabase
     .from('users')
     .select('id, role')
     .eq('id', user.id)
@@ -113,7 +104,9 @@ export async function createMoodEntry({
     console.error('Error loading user profile while logging mood', profileError)
   }
 
-  if (!profileRow) {
+  let profileRole = profileData?.role ?? null
+
+  if (profileRole === null) {
     const fallbackInsert = {
       id: user.id,
       email: user.email ?? '',
@@ -133,10 +126,10 @@ export async function createMoodEntry({
       console.error('Error ensuring user profile before mood entry', upsertError)
     }
 
-    profileRow = fallbackProfile ?? { role: null }
+    profileRole = fallbackProfile?.role ?? null
   }
 
-  const isSupporter = profileRow?.role === 'supporter'
+  const isSupporter = profileRole === 'supporter'
 
   const { data, error } = await supabase
     .from('mood_entries')

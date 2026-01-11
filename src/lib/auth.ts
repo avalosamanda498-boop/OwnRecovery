@@ -32,11 +32,16 @@ export async function signUp(email: string, password: string, fullName: string) 
   return data
 }
 
-export async function signIn(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
+export async function signIn(identifier: string, password: string) {
+  const trimmed = identifier.trim()
+  const isEmail = trimmed.includes('@')
+  const cleaned = trimmed.replace(/\s+/g, '')
+
+  const payload = isEmail
+    ? { email: cleaned, password }
+    : { phone: normalizePhone(cleaned), password }
+
+  const { data, error } = await supabase.auth.signInWithPassword(payload as any)
 
   if (error) throw error
   return data
@@ -48,65 +53,37 @@ export async function signOut() {
 }
 
 export async function getCurrentUser(): Promise<AuthUser | null> {
-  const { data: { user } } = await supabase.auth.getUser()
-  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   if (!user) return null
 
-  // Try to load profile (maybeSingle avoids 406 when no row yet)
-  let profile = null
+  let profile: any = null
 
   const { data: profileRows, error: selectError } = await supabase
     .from('users')
-    .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, pending_support_invite_expires_at, last_support_invite_generated_at, user_type, sobriety_start_date, prefers_anonymous, privacy_settings')
+    .select(
+      'role, full_name, is_admin, onboarding_completed, pending_support_invite_code, pending_support_invite_expires_at, last_support_invite_generated_at, user_type, sobriety_start_date, prefers_anonymous, privacy_settings'
+    )
     .eq('id', user.id)
     .limit(1)
 
   if (selectError) {
     console.error('Error fetching user profile:', selectError)
-    return null
-  }
-
-  if (profileRows && profileRows.length > 0) {
+  } else if (profileRows && profileRows.length > 0) {
     profile = profileRows[0]
   }
 
-  // If no profile row exists yet, create one and re-fetch
   if (!profile) {
-    const insertPayload = {
-      id: user.id,
-      email: user.email,
-      full_name: user.user_metadata?.full_name ?? null,
-      user_type: 'regular',
-      prefers_anonymous: false,
-    }
-
-    const { error: insertError } = await supabase.from('users').insert(insertPayload)
-    if (insertError) {
-      console.error('Error creating user profile:', insertError)
-      return {
+    profile =
+      (await ensureUserProfile({
         id: user.id,
-        email: user.email!,
-        role: null,
+        email: user.email ?? '',
         full_name: user.user_metadata?.full_name ?? null,
-        is_admin: false,
-        onboarding_completed: false,
-        pending_support_invite_code: null,
-        pending_support_invite_expires_at: null,
-        last_support_invite_generated_at: null,
-      }
-    }
-
-    const { data: newProfileRows, error: refetchError } = await supabase
-      .from('users')
-      .select('role, full_name, is_admin, onboarding_completed, pending_support_invite_code, pending_support_invite_expires_at, last_support_invite_generated_at, user_type, sobriety_start_date, prefers_anonymous, privacy_settings')
-      .eq('id', user.id)
-      .limit(1)
-
-    if (refetchError) {
-      console.error('Error re-fetching profile after insert:', refetchError)
-    } else {
-      profile = newProfileRows && newProfileRows.length > 0 ? newProfileRows[0] : null
-    }
+        user_type: 'regular',
+        prefers_anonymous: false,
+      })) ?? null
   }
 
   return {
@@ -129,8 +106,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 export async function updateUserRole(userId: string, role: UserRole) {
   const { error } = await supabase
     .from('users')
-    .update({ role })
-    .eq('id', userId)
+    .upsert({ id: userId, role, updated_at: new Date().toISOString() }, { onConflict: 'id' })
 
   if (error) throw error
 }
@@ -158,10 +134,67 @@ export async function updateUserProfile(userId: string, updates: {
   prefers_anonymous?: boolean
   privacy_settings?: PrivacySettings
 }) {
+  const payload = {
+    id: userId,
+    ...pruneUndefined(updates),
+    updated_at: new Date().toISOString(),
+  }
+
   const { error } = await supabase
     .from('users')
-    .update(updates)
-    .eq('id', userId)
+    .upsert(payload, { onConflict: 'id' })
 
   if (error) throw error
+}
+
+function pruneUndefined<T extends Record<string, any>>(obj: T): Partial<T> {
+  return Object.fromEntries(Object.entries(obj).filter(([, value]) => value !== undefined)) as Partial<T>
+}
+
+async function ensureUserProfile(payload: {
+  id: string
+  email?: string | null
+  full_name?: string | null
+  user_type?: UserType
+  prefers_anonymous?: boolean
+}) {
+  const base = pruneUndefined({
+    ...payload,
+    updated_at: new Date().toISOString(),
+  })
+
+  const { data, error } = await supabase
+    .from('users')
+    .upsert(base, { onConflict: 'id' })
+    .select(
+      'role, full_name, is_admin, onboarding_completed, pending_support_invite_code, pending_support_invite_expires_at, last_support_invite_generated_at, user_type, sobriety_start_date, prefers_anonymous, privacy_settings'
+    )
+    .maybeSingle()
+
+  if (error) {
+    console.error('Error ensuring user profile', error)
+    return null
+  }
+
+  return data
+}
+
+function normalizePhone(input: string) {
+  const trimmed = input.trim()
+  if (trimmed.startsWith('+')) {
+    return trimmed
+  }
+
+  const digitsOnly = trimmed.replace(/[^\d]/g, '')
+  if (!digitsOnly) return trimmed
+
+  if (digitsOnly.length === 10) {
+    return `+1${digitsOnly}`
+  }
+
+  if (digitsOnly.startsWith('1') && digitsOnly.length === 11) {
+    return `+${digitsOnly}`
+  }
+
+  return `+${digitsOnly}`
 }

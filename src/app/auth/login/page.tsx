@@ -7,7 +7,7 @@ import { signIn, getCurrentUser } from '@/lib/auth'
 import { Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -20,19 +20,16 @@ export default function LoginPage() {
     setError('')
 
     try {
-      const { user } = await signIn(email, password)
-      
+      const { user } = await signIn(identifier, password)
+
       if (user) {
-        // Get user profile to check if they have completed onboarding
         const userProfile = await getCurrentUser()
-        
+
         if (userProfile?.user_type === 'admin') {
           router.push('/admin')
         } else if (userProfile?.role) {
-          // User has completed onboarding, redirect to dashboard
           router.push('/dashboard')
         } else {
-          // User needs to complete role selection
           router.push('/auth/role-selection')
         }
       }
@@ -58,18 +55,18 @@ export default function LoginPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email Address
+              <label htmlFor="identifier" className="block text-sm font-medium text-gray-700">
+                Email or phone number
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="identifier"
+                name="identifier"
+                type="text"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 className="input-field mt-1"
-                placeholder="Enter your email"
+                placeholder="Enter your email or phone"
               />
             </div>
 
@@ -95,7 +92,6 @@ export default function LoginPage() {
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                   title={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {/* Allow users to confirm their password entry without retyping */}
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
