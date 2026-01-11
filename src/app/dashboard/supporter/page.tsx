@@ -84,12 +84,18 @@ export default function SupporterDashboardPage() {
                 This dashboard will soon track everyone you’re supporting, share encouragement prompts, and surface resources just for loved ones and allies.
               </p>
             </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
               <Link
                 href="/dashboard/connections"
                 className="inline-flex items-center gap-2 rounded-full border border-success-200 bg-success-50 px-4 py-2 text-sm font-medium text-success-700 shadow-sm transition hover:bg-success-100"
               >
                 Support circle
+              </Link>
+              <Link
+                href="/dashboard/resources"
+                className="inline-flex items-center gap-2 rounded-full border border-success-200 bg-success-50 px-4 py-2 text-sm font-medium text-success-700 shadow-sm transition hover:bg-success-100"
+              >
+                Resource library
               </Link>
               <Link
                 href="/dashboard/settings"
@@ -178,6 +184,7 @@ export default function SupporterDashboardPage() {
                   <SupporterConnectionCard
                     insight={connection}
                     onSendEncouragement={(recoveryUserId) => setSelectedRecipient(recoveryUserId)}
+                    onNudgeSent={loadInsights}
                   />
                 </li>
               ))}

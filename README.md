@@ -31,6 +31,9 @@ Own Recovery is a medical-AI-inspired, human-in-the-loop digital companion that 
 - **Encouragement Messaging**  
   Supporters can send brief, advisory notes that stay in-app, respecting the recovery member’s privacy choices.
 
+- **Curated Resource Library**  
+  Filterable hub of worksheets, audio resets, hotlines, and supporter guides—with tailored quick picks for each role.
+
 - **Crisis Support**  
   Always-on “Help Now” button and smart keyword detection to surface hotlines immediately—without panic, always clear and calm.
 
@@ -47,8 +50,8 @@ Own Recovery is a medical-AI-inspired, human-in-the-loop digital companion that 
 ## Product Roadmap (Current Phase)
 
 - Phase 2 completed: Mood + craving logging, streaks, charts, and badge celebrations.
-- Phase 3 in progress: Supporter connections, privacy controls, encouragement flows, and resource library scaffolding.
-  - New this iteration: advisory alerts, stress/sleep logging, anonymous mode toggle, privacy sharing toggles, in-app data deletion, invite-code based support circles with removal controls, and in-app encouragement messaging with safe presets.
+- Phase 3 in progress: Supporter connections, privacy controls, encouragement flows, and the resource library.
+  - New this iteration: advisory alerts, stress/sleep logging, anonymous mode toggle, privacy sharing toggles, in-app data deletion, invite-code based support circles with removal controls, in-app encouragement messaging with safe presets, and a curated resource hub with role-based quick picks.
 - Phase 4 upcoming: Crisis keyword detection with human escalation, weekly summaries, and admin oversight for flagged events (always respecting RLS in Supabase).
 
 ## 🛠️ Tech Stack
