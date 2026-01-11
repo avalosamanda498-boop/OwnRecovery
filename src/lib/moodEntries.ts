@@ -94,7 +94,16 @@ export async function createMoodEntry({
     throw new Error('Trigger descriptions must be 120 characters or fewer.')
   }
 
-  const { data: profileRow, error: profileError } = await supabase
+  let profileRow: { id: string; role: string | null } | null = null
+  let profileError: any = null
+  const { data: profileData, error: profileFetchError } = await supabase
+    .from('users')
+    .select('id, role')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  profileRow = profileData
+  profileError = profileFetchError
     .from('users')
     .select('id, role')
     .eq('id', user.id)
@@ -114,12 +123,17 @@ export async function createMoodEntry({
       prefers_anonymous: false,
     }
 
-    const { error: insertProfileError } = await supabase.from('users').insert(fallbackInsert)
+    const { data: fallbackProfile, error: upsertError } = await supabase
+      .from('users')
+      .upsert(fallbackInsert, { onConflict: 'id' })
+      .select('role')
+      .maybeSingle()
 
-    if (insertProfileError) {
-      console.error('Error creating fallback profile before mood entry', insertProfileError)
-      throw new Error('We could not save your check-in yet. Please try again in a moment.')
+    if (upsertError) {
+      console.error('Error ensuring user profile before mood entry', upsertError)
     }
+
+    profileRow = fallbackProfile ?? { role: null }
   }
 
   const isSupporter = profileRow?.role === 'supporter'
