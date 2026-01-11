@@ -29,6 +29,7 @@ CREATE TRIGGER on_auth_user_created
 -- Update RLS policies for users table
 DROP POLICY IF EXISTS "Users can view own profile" ON users;
 DROP POLICY IF EXISTS "Users can update own profile" ON users;
+DROP POLICY IF EXISTS "Users can insert own profile" ON users;
 
 -- Users can only see and modify their own data
 CREATE POLICY "Users can view own profile" ON users
@@ -36,6 +37,9 @@ CREATE POLICY "Users can view own profile" ON users
 
 CREATE POLICY "Users can update own profile" ON users
   FOR UPDATE USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert own profile" ON users
+  FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- Users can insert their own profile (for the trigger)
 CREATE POLICY "Users can insert own profile" ON users
