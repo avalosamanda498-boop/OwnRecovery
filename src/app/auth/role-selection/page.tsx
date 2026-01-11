@@ -27,6 +27,12 @@ export default function RoleSelectionPage() {
     })
   }, [router])
 
+  const routeMap: Record<UserRole, string> = {
+    recovery: 'recovery',
+    still_using: 'still-using',
+    supporter: 'supporter',
+  }
+
   const handleRoleSelection = async (role: UserRole) => {
     setSelectedRole(role)
     setLoading(true)
@@ -36,7 +42,7 @@ export default function RoleSelectionPage() {
       await updateUserRole(user!.id, role)
       
       // Redirect to appropriate onboarding flow
-      router.push(`/onboarding/${role}`)
+      router.push(`/onboarding/${routeMap[role]}`)
     } catch (err: any) {
       setError(err.message || 'An error occurred')
       setLoading(false)
