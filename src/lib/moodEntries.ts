@@ -96,12 +96,30 @@ export async function createMoodEntry({
 
   const { data: profileRow, error: profileError } = await supabase
     .from('users')
-    .select('role')
+    .select('id, role')
     .eq('id', user.id)
     .maybeSingle()
 
   if (profileError) {
     console.error('Error loading user profile while logging mood', profileError)
+  }
+
+  if (!profileRow) {
+    const fallbackInsert = {
+      id: user.id,
+      email: user.email ?? '',
+      full_name: user.user_metadata?.full_name ?? null,
+      role: null,
+      user_type: 'regular' as const,
+      prefers_anonymous: false,
+    }
+
+    const { error: insertProfileError } = await supabase.from('users').insert(fallbackInsert)
+
+    if (insertProfileError) {
+      console.error('Error creating fallback profile before mood entry', insertProfileError)
+      throw new Error('We could not save your check-in yet. Please try again in a moment.')
+    }
   }
 
   const isSupporter = profileRow?.role === 'supporter'
