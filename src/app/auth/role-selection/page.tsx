@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Heart, Brain, Users } from 'lucide-react'
 import { getCurrentUser, updateUserRole } from '@/lib/auth'
 import { UserRole } from '@/types/database'
@@ -12,6 +12,8 @@ export default function RoleSelectionPage() {
   const [error, setError] = useState('')
   const [user, setUser] = useState<any>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const showWelcome = searchParams?.get('welcome') === '1'
 
   useEffect(() => {
     // Get current user to check if they already have a role
@@ -85,6 +87,15 @@ export default function RoleSelectionPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
+        {showWelcome && (
+          <div className="mb-6 rounded-2xl border border-primary-200 bg-primary-50 px-4 py-3 text-sm text-primary-800 shadow-sm">
+            <p className="font-semibold text-primary-900">Account ready!</p>
+            <p className="mt-1">
+              Next, choose the experience that fits you best so we can tailor every check-in.
+            </p>
+          </div>
+        )}
+
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Welcome, {user.full_name || 'Friend'}!

@@ -5,13 +5,11 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signUp } from '@/lib/auth'
 import { supabase } from '@/lib/supabase'
-import type { UserType } from '@/types/database'
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
-  const [userType, setUserType] = useState<UserType>('regular')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
@@ -29,8 +27,8 @@ export default function SignUpPage() {
           id: user.id,
           email,
           full_name: fullName,
-          user_type: userType,
-          is_admin: userType === 'admin',
+          user_type: 'regular' as const,
+          is_admin: false,
           updated_at: new Date().toISOString(),
         }
 
@@ -42,11 +40,7 @@ export default function SignUpPage() {
           throw profileError
         }
 
-        if (userType === 'admin') {
-          router.push('/admin')
-        } else {
-          router.push('/auth/role-selection')
-        }
+        router.replace('/auth/role-selection?welcome=1')
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred during signup')
@@ -118,25 +112,9 @@ export default function SignUpPage() {
               />
             </div>
 
-            <div>
-              <label htmlFor="userType" className="block text-sm font-medium text-gray-700">
-                User Type (temporary)
-              </label>
-              <select
-                id="userType"
-                name="userType"
-                value={userType}
-                onChange={(e) => setUserType(e.target.value as UserType)}
-                className="input-field mt-1"
-              >
-                <option value="regular">Regular User</option>
-                <option value="supporter">Support / Friend</option>
-                <option value="admin">Admin</option>
-              </select>
-              <p className="mt-1 text-xs text-gray-500">
-                We&apos;ll remove this temporary selector once portals and permissions are finalized.
-              </p>
-            </div>
+            <p className="text-xs text-gray-500">
+              After you create your account, we’ll help you choose whether you’re in recovery, thinking about change, or supporting someone.
+            </p>
           </div>
 
           {error && (
