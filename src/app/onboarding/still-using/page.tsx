@@ -64,7 +64,7 @@ export default function StillUsingOnboardingPage() {
       })
 
       setSuccess('Thanks! Your preferences are saved.')
-      router.push('/dashboard')
+      router.replace('/dashboard/still-using')
     } catch (err: any) {
       setError(err.message || 'Something went wrong while saving your information.')
     } finally {
