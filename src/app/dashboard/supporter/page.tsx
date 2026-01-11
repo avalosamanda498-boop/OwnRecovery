@@ -124,15 +124,6 @@ export default function SupporterDashboardPage() {
           onSent={loadInsights}
         />
 
-        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900">Support milestones (coming soon)</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            We’re designing celebrations tailored for supporters—consistency streaks, meaningful check-ins, and moments
-            where your encouragement made a difference. For now, focus on being present; we’ll surface celebrations
-            without comparing you to recovery milestones.
-          </p>
-        </section>
-
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
