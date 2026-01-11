@@ -79,23 +79,8 @@ export default function SignUpPage() {
           </p>
         </div>
 
-        <div className="flex items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              setMode('email')
-              setOtpSent(false)
-              setError('')
-            }}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-              mode === 'email'
-                ? 'bg-primary-600 text-white shadow-sm'
-                : 'bg-white text-primary-600 border border-primary-200'
-            }`}
-          >
-            Use email
-          </button>
-          {phoneAuthEnabled && (
+        {phoneAuthEnabled && (
+          <div className="flex items-center justify-center">
             <button
               type="button"
               onClick={() => {
@@ -110,8 +95,8 @@ export default function SignUpPage() {
             >
               Use phone
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
         <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -207,6 +192,24 @@ export default function SignUpPage() {
               After you create your account, we’ll help you choose whether you’re in recovery, thinking about change, or supporting someone.
             </p>
           </div>
+
+          {phoneAuthEnabled && mode === 'phone' && (
+            <p className="text-center text-xs text-gray-500">
+              Prefer email instead?{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('email')
+                  setOtpSent(false)
+                  setOtpCode('')
+                  setError('')
+                }}
+                className="text-primary-600 underline"
+              >
+                Use email
+              </button>
+            </p>
+          )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
