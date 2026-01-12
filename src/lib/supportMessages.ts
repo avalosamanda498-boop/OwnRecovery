@@ -5,6 +5,7 @@ export interface SupportMessage {
   from_user_id: string
   message: string
   emoji?: string | null
+  metadata?: Record<string, unknown> | null
   created_at: string
   read_at?: string | null
   sender: {
@@ -54,6 +55,39 @@ export async function sendEncouragement(input: {
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}))
     throw new Error(payload?.error ?? 'We could not send that message. Try again soon.')
+  }
+}
+
+export interface SupportNudgeResponse {
+  reason: 'never_logged' | 'overdue' | 'recent' | 'no_shared_data'
+  cooldown_hours: number
+  next_available_at?: string | null
+}
+
+export async function sendSupportNudge(input: {
+  recovery_user_id: string
+}): Promise<SupportNudgeResponse> {
+  const response = await authedFetch('/api/supporter/nudge', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+
+  const payload = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    const error = new Error(payload?.error ?? 'Could not send reminder right now.') as Error & {
+      details?: Record<string, unknown>
+      status?: number
+    }
+    error.details = payload
+    error.status = response.status
+    throw error
+  }
+
+  return {
+    reason: payload.reason,
+    cooldown_hours: payload.cooldown_hours,
+    next_available_at: payload.next_available_at ?? null,
   }
 }
 
