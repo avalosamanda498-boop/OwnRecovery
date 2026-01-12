@@ -9,9 +9,9 @@ interface AdvisoryPanelProps {
 }
 
 const ALERT_STYLES: Record<AdvisoryAlert['severity'], string> = {
-  info: 'border-sky-200 bg-sky-50',
-  watch: 'border-amber-200 bg-amber-50',
-  take_action: 'border-rose-200 bg-rose-50',
+  info: 'border-[rgba(108,77,248,0.35)] bg-[rgba(240,243,255,0.95)]',
+  watch: 'border-[rgba(60,213,255,0.4)] bg-[rgba(237,248,255,0.94)]',
+  take_action: 'border-[rgba(234,84,124,0.4)] bg-[rgba(252,240,246,0.92)]',
 }
 
 const ALERT_BADGE: Record<AdvisoryAlert['severity'], string> = {

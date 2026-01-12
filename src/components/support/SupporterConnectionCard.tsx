@@ -123,14 +123,14 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
   }
 
   return (
-    <article className="card p-6">
+    <article className="card p-6 text-[#1b2240]">
       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-lg font-semibold text-indigo-950">{insight.display_name}</p>
+          <p className="text-lg font-semibold text-[#101633]">{insight.display_name}</p>
           {insight.relationship_note && (
-            <p className="mt-1 text-sm text-slate-600">{insight.relationship_note}</p>
+            <p className="mt-1 text-sm text-[#2a3352]">{insight.relationship_note}</p>
           )}
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-[#4b5672]">
             Connected{' '}
             {new Date(insight.connected_at).toLocaleString(undefined, {
               dateStyle: 'medium',
@@ -146,14 +146,14 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
         </button>
       </div>
 
-      <div className="mt-4 space-y-3 text-sm text-slate-700">
+      <div className="mt-4 space-y-3 text-sm text-[#263154]">
         {hasSharedCheckIns ? (
-          <div className="panel-light-muted border border-sky-200/70 bg-sky-50/90">
-            <div className="flex flex-col gap-1 text-sm text-slate-700">
-              <p className="text-xs font-semibold uppercase tracking-wide text-sky-800">
+          <div className="panel-light-muted border border-[rgba(108,77,248,0.35)] bg-[rgba(241,244,255,0.92)]">
+            <div className="flex flex-col gap-1 text-sm text-[#253054]">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#2f3d6a]">
                 Latest check-in shared
               </p>
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-[#4b5672]">
                 Logged{' '}
                 {new Date(lastCheckIn!.created_at).toLocaleString(undefined, {
                   dateStyle: 'medium',
@@ -193,25 +193,25 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
             </div>
           </div>
         ) : (
-          <div className="panel-light-muted border border-dashed border-slate-300/70 text-sm text-slate-600">
+          <div className="panel-light-muted border border-dashed border-[rgba(84,98,138,0.35)] text-sm text-[#2f3958]">
             They’re keeping check-ins private right now. A kind message or quick nudge can still mean a lot.
           </div>
         )}
 
         {!insight.privacy.show_notes && (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#4a5471]">
             Personal notes stay hidden unless they choose to share them. Honor their pace and celebrate the moments they
             do share.
           </p>
         )}
 
-        <div className="panel-light-muted flex flex-col gap-3 border border-dashed border-success-200/60">
+        <div className="panel-light-muted flex flex-col gap-3 border border-dashed border-[rgba(92,211,177,0.4)]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">Gentle reminder</p>
-            {nudgeDescription && <p className="text-sm text-emerald-700/90">{nudgeDescription}</p>}
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#17604f]">Gentle reminder</p>
+            {nudgeDescription && <p className="text-sm text-[#1f7562]">{nudgeDescription}</p>}
           </div>
           {nudgeState.error && (
-            <div className="rounded-lg border border-rose-200/70 bg-rose-50/90 px-3 py-2 text-xs text-rose-800">
+            <div className="rounded-lg border border-rose-200/70 bg-rose-50/90 px-3 py-2 text-xs text-[#7f1d32]">
               {nudgeState.error}
             </div>
           )}
@@ -219,10 +219,10 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
             type="button"
             onClick={handleSendNudge}
             disabled={!nudgeState.allowed || nudgeState.loading}
-            className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-500 ${
+            className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(92,211,177,0.55)] ${
               nudgeState.allowed
-                ? 'border border-success-300/60 bg-white text-emerald-800 shadow-[0_10px_24px_-20px_rgba(32,178,130,0.45)] hover:bg-slate-50/80 disabled:bg-slate-100'
-                : 'border border-success-100/60 bg-success-100/80 text-emerald-600 cursor-not-allowed'
+                ? 'border border-[rgba(92,211,177,0.45)] bg-white text-[#17604f] shadow-[0_10px_24px_-20px_rgba(32,178,130,0.4)] hover:bg-slate-50/80 disabled:bg-slate-100'
+                : 'border border-[rgba(92,211,177,0.3)] bg-[rgba(208,252,235,0.7)] text-[#1f7562] cursor-not-allowed'
             }`}
           >
             {nudgeState.loading ? 'Sending…' : nudgeState.allowed ? 'Send gentle reminder' : 'Reminder sent'}
@@ -236,8 +236,8 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
 function InsightLine({ label, value }: { label: string; value: string | null | undefined }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="text-sm text-slate-700">{value ?? 'Not logged yet'}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-[#4a5471]">{label}</p>
+      <p className="text-sm text-[#263154]">{value ?? 'Not logged yet'}</p>
     </div>
   )
 }
