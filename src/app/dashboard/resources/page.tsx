@@ -120,21 +120,23 @@ export default function ResourceLibraryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600" />
+      <div className="relative flex min-h-screen items-center justify-center">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-[#06152d]/85 to-[#041029]" />
+        <div className="h-16 w-16 animate-spin rounded-full border-b-2 border-neon-cyan" />
       </div>
     )
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50">
-        <div className="rounded-2xl border border-primary-200 bg-white/95 p-8 text-center shadow-lg">
-          <h1 className="text-2xl font-semibold text-gray-900">Sign in to explore the library</h1>
-          <p className="mt-2 text-sm text-gray-600">Resources are curated based on your recovery path and preferences.</p>
+      <div className="relative flex min-h-screen items-center justify-center px-4">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-[#06152d]/85 to-[#041029]" />
+        <div className="panel-light max-w-md text-center">
+          <h1 className="text-2xl font-semibold">Sign in to explore the library</h1>
+          <p className="mt-2 text-sm text-slate-600">Resources are curated based on your recovery path and preferences.</p>
           <Link
             href="/auth/login"
-            className="mt-4 inline-flex items-center justify-center rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700"
+            className="mt-4 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary-600 via-electric-violet to-secondary-500 px-4 py-2 text-sm font-semibold text-slate-50 shadow-[0_18px_40px_-25px_rgba(76,194,255,0.65)] transition hover:shadow-[0_20px_45px_-25px_rgba(76,194,255,0.75)]"
           >
             Go to login
           </Link>
@@ -144,16 +146,18 @@ export default function ResourceLibraryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-12 px-4">
+    <div className="relative min-h-screen px-4 py-12">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-[#06152d]/85 to-[#041029]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_20%,rgba(108,62,248,0.24),transparent_60%)]" />
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <header className="rounded-3xl border border-primary-100 bg-white/95 p-8 shadow-sm">
+        <header className="panel-light p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="space-y-3">
-              <p className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700">
+              <p className="inline-flex items-center gap-2 rounded-full border border-primary-200/70 bg-primary-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-indigo-900">
                 Library beta
               </p>
-              <h1 className="text-3xl font-bold text-gray-900">Resource hub curated for your journey</h1>
-              <p className="text-sm text-gray-600">
+              <h1 className="text-3xl font-semibold text-indigo-950">Resource hub curated for your journey</h1>
+              <p className="text-sm text-slate-700">
                 Explore exercises, articles, and supportive tools chosen to keep our AI advisory in the loop and humans in
                 control. Everything here is ready to use and respects anonymous mode.
               </p>
@@ -161,20 +165,20 @@ export default function ResourceLibraryPage() {
             <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white px-4 py-2 text-sm font-medium text-indigo-900 shadow-[0_10px_30px_-25px_rgba(35,47,123,0.35)] transition hover:bg-slate-100/90"
               >
                 Back to dashboard
               </Link>
               <Link
                 href="/dashboard/settings"
-                className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 shadow-sm transition hover:bg-primary-100"
+                className="inline-flex items-center gap-2 rounded-full border border-primary-200/70 bg-primary-50 px-4 py-2 text-sm font-medium text-indigo-900 shadow-[0_10px_30px_-25px_rgba(62,74,177,0.35)] transition hover:bg-primary-100/90"
               >
                 Privacy &amp; data controls
               </Link>
             </div>
           </div>
           {activeAudience && (
-            <p className="mt-4 rounded-2xl border border-primary-100 bg-primary-50/70 px-4 py-3 text-sm text-primary-700">
+            <p className="mt-4 rounded-2xl border border-primary-200/70 bg-primary-50 px-4 py-3 text-sm text-indigo-900">
               We’re prioritizing resources for{' '}
               <span className="font-semibold capitalize">{labelForAudience(activeAudience)}</span>. Switch to “Show
               everything” to browse the full library.
@@ -183,13 +187,13 @@ export default function ResourceLibraryPage() {
         </header>
 
         {resourceLoading && (
-          <div className="rounded-2xl border border-gray-200 bg-white/80 px-4 py-3 text-sm text-gray-600 shadow-sm">
+          <div className="panel-light-muted text-sm">
             Loading saved resources…
           </div>
         )}
 
         {resourceError && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 shadow-sm">
+          <div className="panel-light text-sm border border-amber-200/70 bg-amber-50/90 text-amber-900 shadow-[0_25px_60px_-55px_rgba(124,71,15,0.35)]">
             {resourceError}
           </div>
         )}
@@ -213,16 +217,16 @@ export default function ResourceLibraryPage() {
         />
 
         {recommendedResources.length > 0 && (
-          <section className="space-y-4 rounded-3xl border border-primary-100 bg-gradient-to-br from-primary-50 via-white to-primary-100/40 p-6 shadow-sm">
+          <section className="panel-light space-y-4">
             <header className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Quick picks for today</h2>
-                <p className="text-sm text-gray-600">
+                <h2 className="text-lg font-semibold text-indigo-950">Quick picks for today</h2>
+                <p className="text-sm text-slate-700">
                   Based on your role, these are three resources members reach for most often. They stay anonymous and
                   respect your privacy selections.
                 </p>
               </div>
-              <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700">
+              <span className="rounded-full border border-primary-200/60 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-indigo-900 shadow-[0_10px_28px_-22px_rgba(53,62,149,0.35)]">
                 Tailored suggestions
               </span>
             </header>
@@ -234,24 +238,24 @@ export default function ResourceLibraryPage() {
           </section>
         )}
 
-        <section className="space-y-4">
+        <section className="space-y-4 panel-light">
           <header>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-indigo-950">
               {kind === 'all'
                 ? 'All available resources'
                 : `Resources filtered by ${RESOURCE_KINDS.find((entry) => entry.id === kind)?.label ?? 'format'}`}
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-slate-700">
               {filteredResources.length} item{filteredResources.length === 1 ? '' : 's'} match your filters.
             </p>
           </header>
 
           {filteredResources.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-gray-300 bg-white/90 p-6 text-sm text-gray-600">
+            <div className="panel-light-muted border border-dashed border-slate-300/70 text-sm text-slate-600">
               We don’t have a resource that matches those filters yet. Try clearing the tag or searching a broader term.
               You can also{' '}
               <a
-                className="text-primary-600 underline"
+                className="text-indigo-700 underline"
                 href="mailto:hello@ownrecovery.app?subject=Resource%20suggestion"
               >
                 suggest a resource

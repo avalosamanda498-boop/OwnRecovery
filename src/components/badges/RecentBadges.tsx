@@ -39,30 +39,33 @@ export function RecentBadges({
   }, [latestBadges])
 
   return (
-    <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+    <section className="panel-light">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-          <p className="text-sm text-gray-600">Badges you’ve earned from recent check-ins.</p>
+          <h2 className="text-lg font-semibold text-indigo-950">{title}</h2>
+          <p className="text-sm text-slate-700">Badges you’ve earned from recent check-ins.</p>
         </div>
       </div>
 
       <div className="mt-4 space-y-3">
         {badges.length === 0 && (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-600">
+          <div className="panel-light-muted border border-dashed border-slate-300/70 text-sm text-slate-600">
             {emptyMessage}
           </div>
         )}
 
         {badges.map((badge) => (
-          <div key={badge.id} className="flex items-start gap-3 rounded-xl border border-amber-100 bg-amber-50 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-2xl">
+          <div
+            key={badge.id}
+            className="flex items-start gap-3 rounded-xl border border-amber-200/70 bg-amber-50/90 p-4 shadow-[0_18px_40px_-30px_rgba(124,88,20,0.35)]"
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-200/70 bg-white text-2xl text-amber-600 shadow-[0_10px_24px_-18px_rgba(122,91,24,0.45)]">
               {badge.icon ?? '🌟'}
             </div>
-            <div className="space-y-1 text-sm text-gray-700">
-              <p className="font-semibold text-gray-900">{badge.badge_name}</p>
+            <div className="space-y-1 text-sm text-slate-700">
+              <p className="font-semibold text-indigo-950">{badge.badge_name}</p>
               {badge.description && <p>{badge.description}</p>}
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-slate-500">
                 {new Date(badge.earned_at).toLocaleString(undefined, {
                   dateStyle: 'medium',
                   timeStyle: 'short',

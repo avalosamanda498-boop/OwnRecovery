@@ -112,7 +112,7 @@ a:hover {
   }
 
   .card {
-    @apply relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-slate-100 shadow-[0_25px_65px_-35px_rgba(120,162,255,0.75)] backdrop-blur-2xl;
+    @apply relative overflow-hidden rounded-3xl border border-slate-200/70 bg-[rgba(246,248,255,0.93)] p-6 text-slate-900 shadow-[0_30px_75px_-55px_rgba(36,48,121,0.45)] backdrop-blur-xl;
   }
 
   .card::before {
@@ -120,9 +120,32 @@ a:hover {
     position: absolute;
     inset: -1px;
     border-radius: inherit;
-    background: linear-gradient(140deg, rgba(130,146,255,0.45), rgba(76,194,255,0.35), transparent 60%);
-    opacity: 0.25;
+    background: linear-gradient(135deg, rgba(199, 209, 255, 0.65), rgba(143, 203, 255, 0.45), transparent 70%);
+    opacity: 0.55;
     pointer-events: none;
+  }
+
+  .panel-light {
+    @apply rounded-3xl border border-slate-200/70 bg-[rgba(245,247,255,0.96)] p-6 shadow-[0_30px_70px_-55px_rgba(35,46,120,0.35)] backdrop-blur-xl;
+    color: #0d1636;
+  }
+
+  .panel-light h1,
+  .panel-light h2,
+  .panel-light h3,
+  .panel-light h4,
+  .panel-light h5,
+  .panel-light h6 {
+    color: #09123c !important;
+  }
+
+  .panel-light :is(p, span, li, label) {
+    color: #1a2549 !important;
+  }
+
+  .panel-light-muted {
+    @apply rounded-3xl border border-slate-200/60 bg-[rgba(239,242,255,0.92)] p-4 shadow-[0_25px_60px_-55px_rgba(33,45,112,0.28)] backdrop-blur-lg;
+    color: #102047;
   }
 
   .input-field {
@@ -198,14 +221,36 @@ a:hover {
 
 /* Global overrides for legacy utility combinations */
 .bg-white {
-  background-color: rgba(22, 26, 46, 0.72) !important;
-  backdrop-filter: blur(28px);
+  background-color: rgba(246, 248, 255, 0.96) !important;
+  color: #0d1636 !important;
+  border: 1px solid rgba(138, 155, 255, 0.32) !important;
+  backdrop-filter: blur(22px);
 }
 
 .bg-gray-50,
 .bg-gray-100 {
-  background-color: rgba(18, 24, 40, 0.6) !important;
-  backdrop-filter: blur(18px);
+  background-color: rgba(242, 245, 255, 0.94) !important;
+  color: #0f1a40 !important;
+  border: 1px solid rgba(172, 188, 255, 0.25) !important;
+  backdrop-filter: blur(20px);
+}
+
+.bg-white :is(h1, h2, h3, h4, h5, h6) {
+  color: #081032 !important;
+}
+
+.bg-white :is(p, span, li, label, button) {
+  color: #14204a !important;
+}
+
+.bg-gray-50 :is(h1, h2, h3, h4, h5, h6),
+.bg-gray-100 :is(h1, h2, h3, h4, h5, h6) {
+  color: #0b1437 !important;
+}
+
+.bg-gray-50 :is(p, span, li, label, button),
+.bg-gray-100 :is(p, span, li, label, button) {
+  color: #1a2549 !important;
 }
 
 .bg-primary-50,
@@ -214,12 +259,12 @@ a:hover {
 .bg-warning-50,
 .bg-danger-50 {
   position: relative;
-  background-color: rgba(12, 18, 38, 0.82) !important;
-  border: 1px solid rgba(144, 172, 255, 0.2) !important;
-  box-shadow: inset 0 0 0 1px rgba(99, 219, 255, 0.08), 0 25px 60px -45px rgba(118, 133, 255, 0.45);
-  color: var(--color-heading) !important;
+  background-color: rgba(247, 249, 255, 0.95) !important;
+  border: 1px solid rgba(136, 151, 255, 0.38) !important;
+  box-shadow: 0 32px 70px -55px rgba(42, 57, 124, 0.35);
+  color: #0d1533 !important;
   overflow: hidden;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(18px);
 }
 
 .bg-primary-50::before,
@@ -231,8 +276,8 @@ a:hover {
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(86, 106, 255, 0.28), rgba(60, 242, 255, 0.18), transparent 65%);
-  opacity: 0.75;
+  background: linear-gradient(135deg, rgba(175, 188, 255, 0.55), rgba(152, 228, 255, 0.4), transparent 65%);
+  opacity: 0.6;
   pointer-events: none;
 }
 
@@ -246,23 +291,23 @@ a:hover {
 }
 
 .bg-primary-50 :is(p, span, li) {
-  color: rgba(215, 227, 255, 0.92) !important;
+  color: rgba(30, 48, 109, 0.9) !important;
 }
 
 .bg-secondary-50 :is(p, span, li) {
-  color: rgba(210, 242, 255, 0.94) !important;
+  color: rgba(26, 54, 107, 0.9) !important;
 }
 
 .bg-success-50 :is(p, span, li) {
-  color: rgba(207, 255, 239, 0.94) !important;
+  color: rgba(21, 72, 67, 0.88) !important;
 }
 
 .bg-warning-50 :is(p, span, li) {
-  color: rgba(255, 236, 210, 0.92) !important;
+  color: rgba(111, 61, 10, 0.88) !important;
 }
 
 .bg-danger-50 :is(p, span, li) {
-  color: rgba(255, 217, 221, 0.94) !important;
+  color: rgba(102, 24, 32, 0.88) !important;
 }
 
 .bg-primary-50 :is(h1, h2, h3, h4, h5, h6),
@@ -270,7 +315,7 @@ a:hover {
 .bg-success-50 :is(h1, h2, h3, h4, h5, h6),
 .bg-warning-50 :is(h1, h2, h3, h4, h5, h6),
 .bg-danger-50 :is(h1, h2, h3, h4, h5, h6) {
-  color: #ffffff !important;
+  color: #07103b !important;
 }
 
 .border-gray-200,

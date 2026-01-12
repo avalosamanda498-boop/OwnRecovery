@@ -123,14 +123,14 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
   }
 
   return (
-    <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <article className="card p-6">
       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-lg font-semibold text-gray-900">{insight.display_name}</p>
+          <p className="text-lg font-semibold text-indigo-950">{insight.display_name}</p>
           {insight.relationship_note && (
-            <p className="mt-1 text-sm text-gray-600">{insight.relationship_note}</p>
+            <p className="mt-1 text-sm text-slate-600">{insight.relationship_note}</p>
           )}
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-slate-500">
             Connected{' '}
             {new Date(insight.connected_at).toLocaleString(undefined, {
               dateStyle: 'medium',
@@ -140,20 +140,20 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
         <button
           type="button"
           onClick={() => onSendEncouragement(insight.recovery_user_id)}
-          className="inline-flex items-center gap-2 rounded-full border border-success-200 bg-success-50 px-4 py-1.5 text-xs font-medium text-success-700 transition hover:bg-success-100"
+          className="inline-flex items-center gap-2 rounded-full border border-success-200/70 bg-success-50 px-4 py-1.5 text-xs font-semibold text-emerald-800 shadow-[0_12px_28px_-25px_rgba(33,176,128,0.45)] transition hover:bg-success-50/80"
         >
           Send encouragement
         </button>
       </div>
 
-      <div className="mt-4 space-y-3 text-sm text-gray-700">
+      <div className="mt-4 space-y-3 text-sm text-slate-700">
         {hasSharedCheckIns ? (
-          <div className="rounded-xl border border-sky-200 bg-sky-50/70 p-4">
-            <div className="flex flex-col gap-1 text-sm">
-              <p className="text-xs font-semibold uppercase tracking-wide text-sky-700">
+          <div className="panel-light-muted border border-sky-200/70 bg-sky-50/90">
+            <div className="flex flex-col gap-1 text-sm text-slate-700">
+              <p className="text-xs font-semibold uppercase tracking-wide text-sky-800">
                 Latest check-in shared
               </p>
-              <p className="text-xs text-sky-600">
+              <p className="text-xs text-slate-600">
                 Logged{' '}
                 {new Date(lastCheckIn!.created_at).toLocaleString(undefined, {
                   dateStyle: 'medium',
@@ -193,25 +193,25 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
             </div>
           </div>
         ) : (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-600">
+          <div className="panel-light-muted border border-dashed border-slate-300/70 text-sm text-slate-600">
             They’re keeping check-ins private right now. A kind message or quick nudge can still mean a lot.
           </div>
         )}
 
         {!insight.privacy.show_notes && (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-slate-500">
             Personal notes stay hidden unless they choose to share them. Honor their pace and celebrate the moments they
             do share.
           </p>
         )}
 
-        <div className="rounded-xl border border-dashed border-success-200 bg-success-50/70 p-4 flex flex-col gap-3">
+        <div className="panel-light-muted flex flex-col gap-3 border border-dashed border-success-200/60">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-success-700">Gentle reminder</p>
-            {nudgeDescription && <p className="text-sm text-success-700/90">{nudgeDescription}</p>}
+            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">Gentle reminder</p>
+            {nudgeDescription && <p className="text-sm text-emerald-700/90">{nudgeDescription}</p>}
           </div>
           {nudgeState.error && (
-            <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
+            <div className="rounded-lg border border-rose-200/70 bg-rose-50/90 px-3 py-2 text-xs text-rose-800">
               {nudgeState.error}
             </div>
           )}
@@ -219,10 +219,10 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
             type="button"
             onClick={handleSendNudge}
             disabled={!nudgeState.allowed || nudgeState.loading}
-            className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-500 ${
+            className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-500 ${
               nudgeState.allowed
-                ? 'border border-success-300 bg-white text-success-700 hover:bg-success-100 disabled:bg-success-100'
-                : 'border border-success-100 bg-success-100 text-success-500 cursor-not-allowed'
+                ? 'border border-success-300/60 bg-white text-emerald-800 shadow-[0_10px_24px_-20px_rgba(32,178,130,0.45)] hover:bg-slate-50/80 disabled:bg-slate-100'
+                : 'border border-success-100/60 bg-success-100/80 text-emerald-600 cursor-not-allowed'
             }`}
           >
             {nudgeState.loading ? 'Sending…' : nudgeState.allowed ? 'Send gentle reminder' : 'Reminder sent'}
@@ -236,8 +236,8 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
 function InsightLine({ label, value }: { label: string; value: string | null | undefined }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="text-sm text-gray-800">{value ?? 'Not logged yet'}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="text-sm text-slate-700">{value ?? 'Not logged yet'}</p>
     </div>
   )
 }
