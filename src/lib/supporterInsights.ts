@@ -21,6 +21,14 @@ export interface SupporterConnectionInsight {
     sleep_label: SleepOption | string | null
     sleep_hidden: boolean
   } | null
+  nudge: {
+    allowed: boolean
+    reason: 'never_logged' | 'overdue' | 'recent' | 'no_shared_data'
+    days_since?: number | null
+    last_sent_at?: string | null
+    retry_after_hours?: number | null
+    next_available_at?: string | null
+  }
 }
 
 export async function fetchSupporterConnectionInsights(): Promise<SupporterConnectionInsight[]> {

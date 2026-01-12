@@ -110,6 +110,8 @@ export async function GET(request: Request) {
     }
   })
 
+  const recoveryUserIds = connectionsWithPrivacy.map((connection) => connection.recovery_user_id)
+
   const userIdsNeedingMood = connectionsWithPrivacy
     .filter(
       (connection) =>
@@ -156,8 +158,78 @@ export async function GET(request: Request) {
     }
   }
 
+  let latestNudgesByUser = new Map<
+    string,
+    {
+      created_at: string
+      metadata: Record<string, unknown> | null
+    }
+  >()
+
+  if (recoveryUserIds.length > 0) {
+    const { data: recentNudges, error: nudgesError } = await supabaseAdmin
+      .from('support_messages')
+      .select('to_user_id, created_at, metadata')
+      .eq('from_user_id', user.id)
+      .in('to_user_id', Array.from(new Set(recoveryUserIds)))
+      .eq('metadata->>kind', 'nudge')
+      .order('created_at', { ascending: false })
+
+    if (nudgesError) {
+      console.error('Error loading supporter nudges', nudgesError)
+    } else if (recentNudges) {
+      latestNudgesByUser = recentNudges.reduce((map, row) => {
+        if (!map.has(row.to_user_id)) {
+          map.set(row.to_user_id, {
+            created_at: row.created_at,
+            metadata: (row.metadata as Record<string, unknown> | null) ?? null,
+          })
+        }
+        return map
+      }, new Map<string, { created_at: string; metadata: Record<string, unknown> | null }>())
+    }
+  }
+
   const snapshots = connectionsWithPrivacy.map((connection) => {
     const latestEntry = latestEntriesByUser.get(connection.recovery_user_id)
+    const lastNudge = latestNudgesByUser.get(connection.recovery_user_id)
+    const now = new Date()
+    const msPerDay = 1000 * 60 * 60 * 24
+    const msPerHour = 1000 * 60 * 60
+    const cooldownHours = 18
+
+    let nudgeReason: 'never_logged' | 'overdue' | 'recent' | 'no_shared_data' = 'no_shared_data'
+    let daysSince: number | null = null
+
+    if (connection.privacy.show_mood_trends || connection.privacy.show_craving_levels) {
+      if (!latestEntry) {
+        nudgeReason = 'never_logged'
+      } else {
+        const createdAt = new Date(latestEntry.created_at)
+        const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / msPerDay)
+        daysSince = Math.max(diffDays, 0)
+        nudgeReason = diffDays >= 3 ? 'overdue' : 'recent'
+      }
+    } else {
+      nudgeReason = 'no_shared_data'
+    }
+
+    const lastNudgeAt = lastNudge ? new Date(lastNudge.created_at) : null
+    const hoursSinceNudge =
+      lastNudgeAt !== null ? (now.getTime() - lastNudgeAt.getTime()) / msPerHour : null
+    const withinCooldown = hoursSinceNudge !== null && hoursSinceNudge < cooldownHours
+    const retryAfterHours =
+      withinCooldown && hoursSinceNudge !== null
+        ? Math.max(0, Math.ceil(cooldownHours - hoursSinceNudge))
+        : null
+
+    const nudgeAllowed =
+      !withinCooldown && (nudgeReason === 'overdue' || nudgeReason === 'never_logged' || nudgeReason === 'no_shared_data')
+
+    const nextAvailableAt =
+      withinCooldown && lastNudgeAt
+        ? new Date(lastNudgeAt.getTime() + cooldownHours * msPerHour).toISOString()
+        : null
 
     const lastCheckIn =
       latestEntry && (connection.privacy.show_mood_trends || connection.privacy.show_craving_levels)
@@ -183,6 +255,14 @@ export async function GET(request: Request) {
       connected_at: connection.connected_at,
       privacy: connection.privacy,
       last_check_in: lastCheckIn,
+      nudge: {
+        allowed: nudgeAllowed,
+        reason: nudgeReason,
+        days_since: daysSince,
+        last_sent_at: lastNudge?.created_at ?? null,
+        retry_after_hours: retryAfterHours,
+        next_available_at: nextAvailableAt,
+      },
     }
   })
 

@@ -33,7 +33,7 @@ export async function GET(request: Request) {
 
   const { data: messages, error: messagesError } = await supabaseAdmin
     .from('support_messages')
-    .select('id, from_user_id, message, emoji, created_at, read_at')
+    .select('id, from_user_id, message, emoji, created_at, read_at, metadata')
     .eq('to_user_id', user.id)
     .order('created_at', { ascending: false })
     .limit(limit)
@@ -75,6 +75,7 @@ export async function GET(request: Request) {
     from_user_id: row.from_user_id,
     message: row.message,
     emoji: row.emoji,
+    metadata: row.metadata as Record<string, unknown> | null,
     created_at: row.created_at,
     read_at: row.read_at,
     sender: senders.get(row.from_user_id) ?? {

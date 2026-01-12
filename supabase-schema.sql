@@ -87,6 +87,7 @@ CREATE TABLE support_messages (
     to_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     message TEXT NOT NULL,
     emoji VARCHAR(10),
+    metadata JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     read_at TIMESTAMP WITH TIME ZONE
 );

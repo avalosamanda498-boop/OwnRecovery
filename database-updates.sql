@@ -133,6 +133,9 @@ ALTER TABLE public.badges
   ADD COLUMN IF NOT EXISTS icon TEXT,
   ADD COLUMN IF NOT EXISTS metadata JSONB;
 
+ALTER TABLE public.support_messages
+  ADD COLUMN IF NOT EXISTS metadata JSONB;
+
 -- Add wellness context to mood entries
 ALTER TABLE public.mood_entries
   ADD COLUMN IF NOT EXISTS stress_level TEXT CHECK (stress_level IN ('low', 'moderate', 'high')),
