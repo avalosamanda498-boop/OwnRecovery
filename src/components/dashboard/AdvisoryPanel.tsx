@@ -9,9 +9,9 @@ interface AdvisoryPanelProps {
 }
 
 const ALERT_STYLES: Record<AdvisoryAlert['severity'], string> = {
-  info: 'border-sky-200 bg-sky-50 text-sky-800',
-  watch: 'border-amber-200 bg-amber-50 text-amber-800',
-  take_action: 'border-rose-200 bg-rose-50 text-rose-800',
+  info: 'border-sky-200 bg-sky-50',
+  watch: 'border-amber-200 bg-amber-50',
+  take_action: 'border-rose-200 bg-rose-50',
 }
 
 const ALERT_BADGE: Record<AdvisoryAlert['severity'], string> = {
@@ -79,15 +79,17 @@ export function AdvisoryPanel({ range = 7 }: AdvisoryPanelProps) {
       {alerts.map((alert) => (
         <article
           key={alert.id}
-          className={`rounded-2xl border p-5 shadow-sm transition ${ALERT_STYLES[alert.severity]}`}
+          className={`rounded-2xl border p-5 text-[#1b2240] shadow-sm transition ${ALERT_STYLES[alert.severity]}`}
         >
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide">{ALERT_BADGE[alert.severity]}</p>
-              <h3 className="mt-1 text-lg font-semibold">{alert.headline}</h3>
-              <p className="mt-2 text-sm leading-relaxed">{alert.message}</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#2a3352]">
+                {ALERT_BADGE[alert.severity]}
+              </p>
+              <h3 className="mt-1 text-lg font-semibold text-[#101633]">{alert.headline}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#2f3958]">{alert.message}</p>
             </div>
-            <span className="rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-medium text-gray-600">
+            <span className="rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-medium text-slate-600">
               Gentle reminder • You choose the next step
             </span>
           </div>

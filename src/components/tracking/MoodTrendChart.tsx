@@ -197,9 +197,9 @@ export default function MoodTrendChart({ data, rangeLabel }: MoodTrendChartProps
         </ResponsiveContainer>
       </div>
       {trendInsight && (
-        <div className="rounded-2xl border border-primary-100 bg-primary-50/60 p-4 text-sm text-primary-800">
-          <p className="font-medium text-primary-900">Today’s interpretation</p>
-          <p className="mt-1">{trendInsight}</p>
+        <div className="rounded-2xl border border-primary-100 bg-primary-50/60 p-4 text-sm text-[#24304f]">
+          <p className="font-medium text-[#101633]">Today’s interpretation</p>
+          <p className="mt-1 text-[#2e3958]">{trendInsight}</p>
         </div>
       )}
     </div>
