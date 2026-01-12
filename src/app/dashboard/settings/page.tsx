@@ -91,8 +91,8 @@ export default function SettingsPage() {
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(110,64,255,0.18),transparent_55%)]" />
       <div className="mx-auto flex max-w-3xl flex-col gap-8">
         <header className="panel-light p-8">
-          <h1 className="text-3xl font-bold text-primary">Privacy & safeguards</h1>
-          <p className="mt-2 text-sm text-secondary">
+          <h1 className="text-3xl font-bold text-gray-900">Privacy & safeguards</h1>
+          <p className="mt-2 text-sm text-gray-700">
             Own Recovery keeps AI as gentle guidance while humans stay in control. Review how you appear to supporters,
             and manage your data here.
           </p>
@@ -103,8 +103,8 @@ export default function SettingsPage() {
 
         <section className="panel-light space-y-4">
           <header>
-            <h2 className="text-lg font-semibold text-primary">Anonymous mode</h2>
-            <p className="mt-1 text-sm text-secondary">
+            <h2 className="text-lg font-semibold text-gray-900">Anonymous mode</h2>
+            <p className="mt-1 text-sm text-gray-700">
               Use a non-identifiable display name anywhere supporters might see your information.
             </p>
           </header>
@@ -116,7 +116,7 @@ export default function SettingsPage() {
               checked={prefersAnonymous}
               onChange={(event) => setPrefersAnonymous(event.target.checked)}
             />
-            <span className="text-sm text-secondary">
+            <span className="text-sm text-gray-700">
               Show me as “Anonymous” to supporters and hide identifying details. I acknowledge my supporters will still
               see mood and craving trends that I choose to share.
             </span>
@@ -138,8 +138,8 @@ export default function SettingsPage() {
 
         <section className="panel-light space-y-4">
           <header>
-            <h2 className="text-lg font-semibold text-primary">What supporters can see</h2>
-            <p className="mt-1 text-sm text-secondary">
+            <h2 className="text-lg font-semibold text-gray-900">What supporters can see</h2>
+            <p className="mt-1 text-sm text-gray-700">
               You stay in control. Choose which insights appear for the supporters you invite. We always explain when
               something is hidden so expectations stay clear.
             </p>
@@ -184,7 +184,7 @@ export default function SettingsPage() {
             onChange={(value) => setPrivacySettings((prev) => ({ ...prev, show_badges: value }))}
           />
 
-          <p className="text-xs text-secondary">
+          <p className="text-xs text-gray-600">
             Changes apply instantly once you save. Supporters never see more than you allow, and every alert remains a
             suggestion—you choose what to act on.
           </p>
@@ -193,7 +193,7 @@ export default function SettingsPage() {
         <section className="rounded-3xl border border-[color:rgba(234,84,124,0.35)] bg-[color:rgba(70,24,38,0.65)] p-6 shadow-[0_30px_70px_-50px_rgba(234,84,124,0.35)] text-secondary">
           <header>
             <h2 className="text-lg font-semibold text-primary">Delete my data</h2>
-            <p className="mt-1 text-sm text-secondary">
+            <p className="mt-1 text-sm text-gray-700">
               This will delete your account, check-in history, badges, and supporter connections. You can always start
               fresh later.
             </p>
@@ -208,7 +208,7 @@ export default function SettingsPage() {
             {deleteState === 'saving' ? 'Deleting…' : 'Delete everything and sign me out'}
           </button>
 
-          <p className="text-xs text-secondary">
+          <p className="text-xs text-gray-600">
             Advisory only: We recommend letting a supporter know before deleting so they understand why your data
             disappeared.
           </p>
@@ -244,8 +244,8 @@ function PrivacyToggle({
         checked={checked}
         onChange={(event) => onChange(event.target.checked)}
       />
-      <span className="space-y-1 text-sm text-secondary">
-        <span className="block font-semibold text-primary">{label}</span>
+      <span className="space-y-1 text-sm text-gray-700">
+        <span className="block font-semibold text-gray-900">{label}</span>
         <span>{description}</span>
       </span>
     </label>

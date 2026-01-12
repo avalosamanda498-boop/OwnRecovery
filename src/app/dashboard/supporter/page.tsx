@@ -82,8 +82,8 @@ export default function SupporterDashboardPage() {
         <header className="panel-light p-8 shadow-[0_35px_90px_-45px_rgba(0,242,254,0.35)]">
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold text-primary">Thank you for showing up</h1>
-              <p className="mt-2 text-secondary">
+              <h1 className="text-3xl font-semibold text-gray-900">Thank you for showing up</h1>
+              <p className="mt-2 text-gray-700">
                 This dashboard will soon track everyone you’re supporting, share encouragement prompts, and surface resources just for loved ones and allies.
               </p>
             </div>
@@ -136,8 +136,8 @@ export default function SupporterDashboardPage() {
         <section className="panel-light space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-primary">Your well-being trends</h2>
-              <p className="text-sm text-secondary">
+              <h2 className="text-lg font-semibold text-gray-900">Your well-being trends</h2>
+              <p className="text-sm text-gray-700">
                 Notice how your mood shifts as you support someone else. Taking care of you helps them too.
               </p>
             </div>
@@ -150,7 +150,7 @@ export default function SupporterDashboardPage() {
                   className={`px-3 py-1.5 rounded-full border text-sm transition-colors ${
                     range === value
                       ? 'border-[color:rgba(60,213,255,0.65)] bg-[color:rgba(28,46,70,0.6)] text-[color:var(--accent-secondary)]'
-                      : 'border-[color:var(--border-soft)] text-secondary hover:border-[color:rgba(60,213,255,0.4)]'
+                      : 'border-[color:var(--border-soft)] text-gray-600 hover:border-[color:rgba(60,213,255,0.4)]'
                   }`}
                 >
                   Last {value} days
@@ -163,14 +163,14 @@ export default function SupporterDashboardPage() {
 
         <section className="panel-light space-y-4">
           <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-semibold text-primary">Who you’re supporting</h2>
-            <p className="text-sm text-secondary">
+            <h2 className="text-lg font-semibold text-gray-900">Who you’re supporting</h2>
+            <p className="text-sm text-gray-700">
               Only shows people who invited you. We hide details they keep private, but you’ll know when to reach out.
             </p>
           </div>
 
           {insightsLoading ? (
-            <div className="flex items-center gap-3 text-sm text-secondary">
+            <div className="flex items-center gap-3 text-sm text-gray-700">
               <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-[color:var(--accent-secondary)]" />
               Loading your support circle…
             </div>
@@ -179,7 +179,7 @@ export default function SupporterDashboardPage() {
               {insightsError}
             </div>
           ) : insights.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-[color:var(--border-soft)] bg-[color:rgba(32,38,66,0.65)] px-4 py-4 text-sm text-secondary">
+            <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 py-4 text-sm text-gray-700">
               No active connections yet. Ask your friend to share their invite code when they’re ready for encouragement.
             </div>
           ) : (
@@ -199,8 +199,8 @@ export default function SupporterDashboardPage() {
 
         <section className="grid gap-6 md:grid-cols-2">
           <div className="panel-light h-full">
-            <h2 className="text-lg font-semibold text-primary">Supporter tools on the way</h2>
-            <ul className="mt-3 list-inside list-disc space-y-2 text-sm text-secondary">
+            <h2 className="text-lg font-semibold text-gray-900">Supporter tools on the way</h2>
+            <ul className="mt-3 list-inside list-disc space-y-2 text-sm text-gray-700">
               <li>Encouragement prompts you can send with one tap.</li>
               <li>When to check in—gentle nudges and milestones.</li>
               <li>Shared resources (articles, groups, crisis lines).</li>
@@ -208,8 +208,8 @@ export default function SupporterDashboardPage() {
           </div>
 
           <div className="panel-light h-full">
-            <h2 className="text-lg font-semibold text-primary">Need help yourself?</h2>
-            <p className="mt-2 text-sm text-secondary">
+            <h2 className="text-lg font-semibold text-gray-900">Need help yourself?</h2>
+            <p className="mt-2 text-sm text-gray-700">
               Caregivers need support too. We’ll surface ally groups, therapist directories, and quick tips for staying grounded while you show up for someone else.
             </p>
             <Link
@@ -221,7 +221,7 @@ export default function SupporterDashboardPage() {
           </div>
         </section>
 
-        <footer className="text-center text-sm text-secondary">
+        <footer className="text-center text-sm text-gray-600">
           Placeholder dashboard — more features arriving in the next milestone.
         </footer>
       </div>
