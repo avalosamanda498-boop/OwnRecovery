@@ -126,11 +126,11 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
     <article className="rounded-2xl border border-primary-100 bg-white p-6 text-gray-900 shadow-sm">
       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-lg font-semibold text-slate-900">{insight.display_name}</p>
+          <p className="text-lg font-semibold text-slate-800">{insight.display_name}</p>
           {insight.relationship_note && (
-            <p className="mt-1 text-sm text-slate-900">{insight.relationship_note}</p>
+            <p className="mt-1 text-sm text-slate-800">{insight.relationship_note}</p>
           )}
-          <p className="mt-1 text-xs text-slate-900">
+          <p className="mt-1 text-xs text-slate-800">
             Connected{' '}
             {new Date(insight.connected_at).toLocaleString(undefined, {
               dateStyle: 'medium',

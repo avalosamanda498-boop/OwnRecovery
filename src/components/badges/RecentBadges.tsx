@@ -62,10 +62,10 @@ export function RecentBadges({
             <div className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-200/70 bg-white text-2xl text-amber-600 shadow-[0_10px_24px_-18px_rgba(122,91,24,0.45)]">
               {badge.icon ?? '🌟'}
             </div>
-            <div className="space-y-1 text-sm text-slate-900">
-              <p className="font-semibold text-slate-900">{badge.badge_name}</p>
-              {badge.description && <p className="text-slate-900">{badge.description}</p>}
-              <p className="text-xs text-slate-900">
+            <div className="space-y-1 text-sm text-slate-800">
+              <p className="font-semibold text-slate-800">{badge.badge_name}</p>
+              {badge.description && <p className="text-slate-800">{badge.description}</p>}
+              <p className="text-xs text-slate-800">
                 {new Date(badge.earned_at).toLocaleString(undefined, {
                   dateStyle: 'medium',
                   timeStyle: 'short',
