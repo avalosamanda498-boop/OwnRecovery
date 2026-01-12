@@ -9,9 +9,9 @@ interface AdvisoryPanelProps {
 }
 
 const ALERT_STYLES: Record<AdvisoryAlert['severity'], string> = {
-  info: 'border-[rgba(108,77,248,0.35)] bg-[rgba(240,243,255,0.95)]',
-  watch: 'border-[rgba(60,213,255,0.4)] bg-[rgba(237,248,255,0.94)]',
-  take_action: 'border-[rgba(234,84,124,0.4)] bg-[rgba(252,240,246,0.92)]',
+  info: 'border-primary-100 bg-white',
+  watch: 'border-amber-100 bg-white',
+  take_action: 'border-rose-100 bg-white',
 }
 
 const ALERT_BADGE: Record<AdvisoryAlert['severity'], string> = {
@@ -66,8 +66,8 @@ export function AdvisoryPanel({ range = 7 }: AdvisoryPanelProps) {
   if (alerts.length === 0) {
     return (
       <section className="rounded-2xl border border-emerald-100 bg-emerald-50/80 p-5 shadow-sm">
-        <p className="text-sm font-semibold text-emerald-800">All signals are steady.</p>
-        <p className="mt-1 text-xs text-emerald-700">
+        <p className="text-sm font-semibold text-emerald-900">All signals are steady.</p>
+        <p className="mt-1 text-xs text-emerald-800">
           Insights stay gentle nudges. Keep logging each day so we can surface support early when you need it.
         </p>
       </section>
@@ -79,17 +79,17 @@ export function AdvisoryPanel({ range = 7 }: AdvisoryPanelProps) {
       {alerts.map((alert) => (
         <article
           key={alert.id}
-          className={`rounded-2xl border p-5 text-[#1b2240] shadow-sm transition ${ALERT_STYLES[alert.severity]}`}
+          className={`rounded-2xl border p-5 text-gray-900 shadow-sm transition ${ALERT_STYLES[alert.severity]}`}
         >
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#2a3352]">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
                 {ALERT_BADGE[alert.severity]}
               </p>
-              <h3 className="mt-1 text-lg font-semibold text-[#101633]">{alert.headline}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#2f3958]">{alert.message}</p>
+              <h3 className="mt-1 text-lg font-semibold text-gray-900">{alert.headline}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-gray-700">{alert.message}</p>
             </div>
-            <span className="rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-medium text-slate-600">
+            <span className="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600">
               Gentle reminder • You choose the next step
             </span>
           </div>
