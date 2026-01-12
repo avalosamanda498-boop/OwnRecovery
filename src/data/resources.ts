@@ -45,7 +45,7 @@ export const RESOURCE_LIBRARY: ResourceItem[] = [
     description:
       'Printable worksheet that teaches the urge-surfing technique—notice, breathe, and ride out cravings without acting on them.',
     kind: 'worksheet',
-    url: 'https://www.smartrecovery.org/wp-content/uploads/2019/07/Urge-Surfing.pdf',
+    url: 'https://smartrecovery.org/wp-content/uploads/2019/07/Urge-Surfing.pdf',
     length: '2 pages',
     organization: 'SMART Recovery',
     tags: ['cravings', 'worksheet', 'coping'],
@@ -59,7 +59,7 @@ export const RESOURCE_LIBRARY: ResourceItem[] = [
     description:
       'Guided prompts for morning, midday, and evening check-ins so you can spot triggers early and celebrate small wins.',
     kind: 'toolkit',
-    url: 'https://www.smartrecovery.org/wp-content/uploads/2021/05/SMART-Recovery-Planning-Daily-Journal.pdf',
+    url: 'https://smartrecovery.org/wp-content/uploads/2021/05/SMART-Recovery-Planning-Daily-Journal.pdf',
     length: 'Printable journal',
     organization: 'SMART Recovery',
     tags: ['journaling', 'mindset', 'self-awareness'],
@@ -71,9 +71,9 @@ export const RESOURCE_LIBRARY: ResourceItem[] = [
     id: 'supporter-checklist',
     title: 'Supporter Check-in Guide',
     description:
-      'A one-page conversation guide for loved ones: what to ask, how to listen, and phrases that keep boundaries supportive.',
+      'Practical conversation phrases and listening skills for loved ones: how to ask, how to respond, and ways to support without fixing.',
     kind: 'toolkit',
-    url: 'https://drugfree.org/article/7-cs-for-families/',
+    url: 'https://drugfree.org/article/listen-teen/',
     length: '1 page',
     organization: 'Partnership to End Addiction',
     tags: ['supporter', 'communication', 'listening'],
@@ -85,9 +85,9 @@ export const RESOURCE_LIBRARY: ResourceItem[] = [
     id: 'sleep-reset',
     title: 'Sleep Reset for Recovery',
     description:
-      'Evidence-based strategies to rebuild healthy sleep while your body adjusts to recovery or reduced substance use.',
+      'Evidence-based look at how alcohol disrupts each sleep stage plus harm-reduction tips for improving rest while cutting back.',
     kind: 'article',
-    url: 'https://www.sleepfoundation.org/mental-health/addiction-and-sleep',
+    url: 'https://www.sleepfoundation.org/nutrition/alcohol-and-sleep',
     organization: 'Sleep Foundation',
     tags: ['sleep', 'routine', 'wellness'],
     audience: ['recovery', 'still_using'],
@@ -139,7 +139,7 @@ export const RESOURCE_LIBRARY: ResourceItem[] = [
     description:
       'Daily prompts and checkboxes for cravings, gratitude, self-care, and sober activities to build a month of momentum.',
     kind: 'worksheet',
-    url: 'https://www.smartrecovery.org/wp-content/uploads/2020/05/30-Day-Challenge.pdf',
+    url: 'https://smartrecovery.org/wp-content/uploads/2020/05/30-Day-Challenge.pdf',
     organization: 'SMART Recovery',
     tags: ['planning', 'consistency', 'tracking'],
     audience: ['recovery'],
@@ -152,7 +152,7 @@ export const RESOURCE_LIBRARY: ResourceItem[] = [
     description:
       'Stories and skills for families navigating a loved one’s substance use. Learn how to hold boundaries while staying connected.',
     kind: 'audio',
-    url: 'https://drugfree.org/podcast/',
+    url: 'https://drugfree.org/elizabeth-vargas-podcast/',
     organization: 'Partnership to End Addiction',
     tags: ['supporter', 'boundaries', 'listening'],
     audience: ['supporter'],
