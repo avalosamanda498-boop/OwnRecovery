@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Manrope } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
   title: 'Own Recovery - Your Journey, Your Pace',
@@ -33,9 +33,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50">
-          {children}
+      <body className={`${manrope.className} bg-midnight text-slate-100 antialiased`}>
+        <div className="relative min-h-screen overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_20%_20%,rgba(111,126,255,0.25),transparent_45%),radial-gradient(circle_at_80%_15%,rgba(60,242,255,0.18),transparent_40%),radial-gradient(circle_at_50%_85%,rgba(121,58,255,0.22),transparent_45%)]" />
+          <div className="relative z-10">{children}</div>
         </div>
       </body>
     </html>

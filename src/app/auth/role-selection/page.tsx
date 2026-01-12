@@ -55,30 +55,24 @@ export default function RoleSelectionPage() {
       title: 'In Recovery',
       description: 'I am actively working on my recovery journey and want to track my progress.',
       icon: Heart,
-      color: 'text-primary-600',
-      bgColor: 'bg-primary-50',
-      borderColor: 'border-primary-200',
-      hoverColor: 'hover:border-primary-400',
+      iconGlow: 'from-primary-400/60 via-electric-violet/50 to-secondary-400/60',
+      ringColor: 'ring-primary-400/60',
     },
     {
       id: 'still_using' as UserRole,
       title: 'Thinking About Change',
       description: 'I am still using but curious about recovery and want to explore my options.',
       icon: Brain,
-      color: 'text-secondary-600',
-      bgColor: 'bg-secondary-50',
-      borderColor: 'border-secondary-200',
-      hoverColor: 'hover:border-secondary-400',
+      iconGlow: 'from-secondary-400/60 via-neon-cyan/50 to-primary-400/60',
+      ringColor: 'ring-secondary-400/60',
     },
     {
       id: 'supporter' as UserRole,
       title: 'Family & Supporter',
       description: 'I want to support someone in their recovery journey.',
       icon: Users,
-      color: 'text-success-600',
-      bgColor: 'bg-success-50',
-      borderColor: 'border-success-200',
-      hoverColor: 'hover:border-success-400',
+      iconGlow: 'from-success-400/60 via-neon-cyan/50 to-secondary-400/60',
+      ringColor: 'ring-success-400/60',
     },
   ]
 
@@ -91,52 +85,54 @@ export default function RoleSelectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="relative min-h-screen px-4 py-12 sm:px-6 lg:px-8">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-[#06162f]/85 to-[#041029] opacity-95" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(108,62,248,0.22),transparent_55%)]" />
+      <div className="mx-auto max-w-4xl space-y-10">
         {showWelcome && (
-          <div className="mb-6 rounded-2xl border border-primary-200 bg-primary-50 px-4 py-3 text-sm text-primary-800 shadow-sm">
-            <p className="font-semibold text-primary-900">Account ready!</p>
-            <p className="mt-1">
+          <div className="rounded-3xl border border-white/10 bg-white/5 px-6 py-4 text-sm text-slate-200 shadow-[0_35px_90px_-45px_rgba(79,172,254,0.55)] backdrop-blur-2xl">
+            <p className="font-semibold text-slate-50">Account ready!</p>
+            <p className="mt-1 text-slate-300/90">
               Next, choose the experience that fits you best so we can tailor every check-in.
             </p>
           </div>
         )}
 
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="mb-12 text-center space-y-3">
+          <h1 className="text-4xl font-semibold text-slate-50">
             Welcome, {user.full_name || 'Friend'}!
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-base text-slate-300/90">
             To provide you with the most relevant support, please tell us which best describes your situation:
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid gap-8 md:grid-cols-3">
           {roles.map((role) => {
             const Icon = role.icon
             return (
               <div
                 key={role.id}
-                className={`card cursor-pointer transition-all duration-200 ${role.borderColor} ${role.hoverColor} ${
-                  selectedRole === role.id ? 'ring-2 ring-primary-500' : ''
+                className={`relative cursor-pointer overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_30px_80px_-50px_rgba(76,194,255,0.8)] transition-all duration-300 backdrop-blur-2xl hover:-translate-y-1 hover:border-neon-cyan/40 ${
+                  selectedRole === role.id ? `${role.ringColor} ring-2` : ''
                 }`}
                 onClick={() => handleRoleSelection(role.id)}
               >
-                <div className={`${role.bgColor} rounded-lg p-4 mb-4`}>
-                  <Icon className={`w-12 h-12 ${role.color} mx-auto`} />
+                <div className={`mb-4 rounded-2xl bg-gradient-to-br ${role.iconGlow} px-4 py-5 shadow-[0_25px_50px_-30px_rgba(76,194,255,0.8)]`}>
+                  <Icon className="mx-auto h-12 w-12 text-white drop-shadow-[0_10px_25px_rgba(255,255,255,0.35)]" />
                 </div>
                 
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                <h3 className="mb-3 text-xl font-semibold text-slate-50">
                   {role.title}
                 </h3>
                 
-                <p className="text-gray-600 mb-6">
+                <p className="mb-6 text-sm text-slate-300/90">
                   {role.description}
                 </p>
 
                 {loading && selectedRole === role.id && (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                  <div className="flex items-center justify-center text-neon-cyan">
+                    <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-current"></div>
                   </div>
                 )}
               </div>
@@ -145,13 +141,13 @@ export default function RoleSelectionPage() {
         </div>
 
         {error && (
-          <div className="mt-8 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-center">
+          <div className="mt-8 rounded-2xl border border-danger-500/40 bg-danger-500/10 px-4 py-3 text-center text-sm text-danger-200">
             {error}
           </div>
         )}
 
         <div className="mt-12 text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-400/90">
             Your choice helps us personalize your experience. You can always update this later in your settings.
           </p>
         </div>

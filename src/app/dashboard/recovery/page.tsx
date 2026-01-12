@@ -45,34 +45,36 @@ export default function RecoveryDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-12 px-4">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <header className="bg-white border border-primary-100 shadow-sm rounded-2xl p-8">
+    <div className="relative min-h-screen px-4 py-12">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-[#06162f]/85 to-[#051226] opacity-95" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_22%,rgba(108,62,248,0.24),transparent_58%)]" />
+      <div className="mx-auto max-w-5xl space-y-8">
+        <header className="rounded-3xl border border-white/12 bg-white/5 p-8 shadow-[0_35px_90px_-45px_rgba(76,194,255,0.65)] backdrop-blur-2xl">
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-semibold text-slate-50">
                 Welcome back, {user.prefers_anonymous ? 'friend' : user.full_name || 'friend'}
               </h1>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-2 text-slate-300/90">
                 This is your recovery home base. We’ll surface streaks, mood insights, encouragement, and a quick path to support as we build out the full experience.
               </p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
               <Link
                 href="/dashboard/connections"
-                className="inline-flex items-center gap-2 rounded-full border border-secondary-200 bg-secondary-50 px-4 py-2 text-sm font-medium text-secondary-700 shadow-sm transition hover:bg-secondary-100"
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-100 transition hover:border-neon-cyan/40 hover:bg-white/10"
               >
                 Support circle
               </Link>
               <Link
                 href="/dashboard/resources"
-                className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 shadow-sm transition hover:bg-primary-100"
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-100 transition hover:border-neon-cyan/40 hover:bg-white/10"
               >
                 Resource library
               </Link>
               <Link
                 href="/dashboard/settings"
-                className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 shadow-sm transition hover:bg-primary-100"
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-100 transition hover:border-neon-cyan/40 hover:bg-white/10"
               >
                 Privacy &amp; data controls
               </Link>

@@ -68,13 +68,15 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50">
-      <div className="max-w-md w-full space-y-8 p-8">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+    <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-[#06162f]/85 to-[#031324] opacity-95" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_25%_15%,rgba(118,75,255,0.22),transparent_55%)]" />
+      <div className="w-full max-w-md space-y-8 rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_35px_90px_-45px_rgba(76,194,255,0.65)] backdrop-blur-2xl">
+        <div className="text-center space-y-2">
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-50">
             Join Own Recovery
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="text-sm text-slate-300/90">
             Start your journey to recovery and well-being
           </p>
         </div>
@@ -87,10 +89,10 @@ export default function SignUpPage() {
                 setMode('phone')
                 setError('')
               }}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+              className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                 mode === 'phone'
-                  ? 'bg-primary-600 text-white shadow-sm'
-                  : 'bg-white text-primary-600 border border-primary-200'
+                  ? 'border-neon-cyan/60 bg-neon-cyan/20 text-slate-50 shadow-[0_12px_30px_-20px_rgba(60,242,255,0.75)]'
+                  : 'border-white/15 bg-white/5 text-slate-200 hover:border-neon-cyan/40 hover:text-white'
               }`}
             >
               Use phone
@@ -101,7 +103,7 @@ export default function SignUpPage() {
         <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="fullName" className="block text-sm font-medium text-slate-200">
                 Full Name
               </label>
               <input
@@ -119,7 +121,7 @@ export default function SignUpPage() {
             {mode === 'email' || !phoneAuthEnabled ? (
               <>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="email" className="block text-sm font-medium text-slate-200">
                     Email Address
                   </label>
                   <input
@@ -135,7 +137,7 @@ export default function SignUpPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="password" className="block text-sm font-medium text-slate-200">
                     Password
                   </label>
                   <input
@@ -154,7 +156,7 @@ export default function SignUpPage() {
             ) : (
               <>
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="phone" className="block text-sm font-medium text-slate-200">
                     Phone number
                   </label>
                   <input
@@ -170,7 +172,7 @@ export default function SignUpPage() {
                 </div>
                 {otpSent && (
                   <div>
-                    <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="otp" className="block text-sm font-medium text-slate-200">
                       Verification code
                     </label>
                     <input
@@ -188,13 +190,13 @@ export default function SignUpPage() {
               </>
             )}
 
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-slate-400/90">
               After you create your account, we’ll help you choose whether you’re in recovery, thinking about change, or supporting someone.
             </p>
           </div>
 
           {phoneAuthEnabled && mode === 'phone' && (
-            <p className="text-center text-xs text-gray-500">
+            <p className="text-center text-xs text-slate-400">
               Prefer email instead?{' '}
               <button
                 type="button"
@@ -204,7 +206,7 @@ export default function SignUpPage() {
                   setOtpCode('')
                   setError('')
                 }}
-                className="text-primary-600 underline"
+                className="text-neon-cyan underline"
               >
                 Use email
               </button>
@@ -212,7 +214,7 @@ export default function SignUpPage() {
           )}
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+            <div className="rounded-2xl border border-danger-500/40 bg-danger-500/10 px-4 py-3 text-sm text-danger-200">
               {error}
             </div>
           )}
@@ -238,9 +240,9 @@ export default function SignUpPage() {
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-slate-300">
               Already have an account?{' '}
-              <Link href="/auth/login" className="text-primary-600 hover:text-primary-500">
+              <Link href="/auth/login" className="text-neon-cyan hover:text-white">
                 Sign in
               </Link>
             </p>
