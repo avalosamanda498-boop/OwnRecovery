@@ -75,7 +75,7 @@ export function InviteCodePanel({ code, expiresAt, generating, onGenerate }: Inv
             </div>
           </div>
         ) : (
-          <div className="space-y-2 text-sm text-gray-600">
+          <div className="space-y-2 text-sm text-gray-800">
             <p>No code yet. Tap “Create invite code” to share a secure, 24-hour code with a friend.</p>
             <p>Generated codes expire quickly to keep your circle private and predictable.</p>
           </div>

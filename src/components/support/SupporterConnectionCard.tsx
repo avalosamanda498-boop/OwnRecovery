@@ -128,9 +128,9 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
         <div>
           <p className="text-lg font-semibold text-gray-900">{insight.display_name}</p>
           {insight.relationship_note && (
-            <p className="mt-1 text-sm text-gray-600">{insight.relationship_note}</p>
+            <p className="mt-1 text-sm text-gray-800">{insight.relationship_note}</p>
           )}
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-gray-800">
             Connected{' '}
             {new Date(insight.connected_at).toLocaleString(undefined, {
               dateStyle: 'medium',
@@ -146,14 +146,14 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
         </button>
       </div>
 
-      <div className="mt-4 space-y-3 text-sm text-gray-700">
+      <div className="mt-4 space-y-3 text-sm text-gray-900">
         {hasSharedCheckIns ? (
           <div className="rounded-xl border border-primary-100 bg-primary-50/80 p-4">
-            <div className="flex flex-col gap-1 text-sm text-gray-700">
+            <div className="flex flex-col gap-1 text-sm text-gray-900">
               <p className="text-xs font-semibold uppercase tracking-wide text-primary-700">
                 Latest check-in shared
               </p>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-800">
                 Logged{' '}
                 {new Date(lastCheckIn!.created_at).toLocaleString(undefined, {
                   dateStyle: 'medium',
@@ -193,22 +193,22 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
             </div>
           </div>
         ) : (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-700">
+          <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-900">
             They’re keeping check-ins private right now. A kind message or quick nudge can still mean a lot.
           </div>
         )}
 
         {!insight.privacy.show_notes && (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-800">
             Personal notes stay hidden unless they choose to share them. Honor their pace and celebrate the moments they
             do share.
           </p>
         )}
 
-        <div className="rounded-xl border border-dashed border-success-200 bg-success-50/70 p-4 text-sm text-gray-700">
+        <div className="rounded-xl border border-dashed border-success-200 bg-success-50/70 p-4 text-sm text-gray-900">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-success-700">Gentle reminder</p>
-            {nudgeDescription && <p className="text-sm text-gray-700">{nudgeDescription}</p>}
+            {nudgeDescription && <p className="text-sm text-gray-900">{nudgeDescription}</p>}
           </div>
           {nudgeState.error && (
             <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
@@ -236,8 +236,8 @@ export function SupporterConnectionCard({ insight, onSendEncouragement, onNudgeS
 function InsightLine({ label, value }: { label: string; value: string | null | undefined }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="text-sm text-gray-700">{value ?? 'Not logged yet'}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-gray-700">{label}</p>
+      <p className="text-sm text-gray-900">{value ?? 'Not logged yet'}</p>
     </div>
   )
 }
