@@ -150,14 +150,14 @@ export default function ResourceLibraryPage() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-[#06152d]/85 to-[#041029]" />
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_20%,rgba(108,62,248,0.24),transparent_60%)]" />
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <header className="panel-light p-8">
+        <header className="panel-light p-8 text-secondary">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="space-y-3">
-              <p className="inline-flex items-center gap-2 rounded-full border border-primary-200/70 bg-primary-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-indigo-900">
+              <p className="inline-flex items-center gap-2 rounded-full border border-[color:rgba(108,77,248,0.45)] bg-[color:rgba(36,38,74,0.75)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--text-primary)]">
                 Library beta
               </p>
-              <h1 className="text-3xl font-semibold text-indigo-950">Resource hub curated for your journey</h1>
-              <p className="text-sm text-slate-700">
+              <h1 className="text-3xl font-semibold text-primary">Resource hub curated for your journey</h1>
+              <p className="text-sm text-secondary">
                 Explore exercises, articles, and supportive tools chosen to keep our AI advisory in the loop and humans in
                 control. Everything here is ready to use and respects anonymous mode.
               </p>
@@ -165,20 +165,20 @@ export default function ResourceLibraryPage() {
             <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white px-4 py-2 text-sm font-medium text-indigo-900 shadow-[0_10px_30px_-25px_rgba(35,47,123,0.35)] transition hover:bg-slate-100/90"
+                className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border-soft)] bg-[color:rgba(32,38,66,0.75)] px-4 py-2 text-sm font-medium text-primary shadow-[0_10px_30px_-25px_rgba(35,47,123,0.35)] transition hover:border-[color:var(--accent-secondary)]/40"
               >
                 Back to dashboard
               </Link>
               <Link
                 href="/dashboard/settings"
-                className="inline-flex items-center gap-2 rounded-full border border-primary-200/70 bg-primary-50 px-4 py-2 text-sm font-medium text-indigo-900 shadow-[0_10px_30px_-25px_rgba(62,74,177,0.35)] transition hover:bg-primary-100/90"
+                className="inline-flex items-center gap-2 rounded-full border border-[color:rgba(108,77,248,0.45)] bg-[color:rgba(36,38,74,0.75)] px-4 py-2 text-sm font-medium text-primary shadow-[0_10px_30px_-25px_rgba(62,74,177,0.35)] transition hover:border-[color:var(--accent-secondary)]/45"
               >
                 Privacy &amp; data controls
               </Link>
             </div>
           </div>
           {activeAudience && (
-            <p className="mt-4 rounded-2xl border border-primary-200/70 bg-primary-50 px-4 py-3 text-sm text-indigo-900">
+            <p className="mt-4 rounded-2xl border border-[color:rgba(108,77,248,0.45)] bg-[color:rgba(36,38,74,0.75)] px-4 py-3 text-sm text-primary">
               We’re prioritizing resources for{' '}
               <span className="font-semibold capitalize">{labelForAudience(activeAudience)}</span>. Switch to “Show
               everything” to browse the full library.
@@ -193,7 +193,7 @@ export default function ResourceLibraryPage() {
         )}
 
         {resourceError && (
-          <div className="panel-light text-sm border border-amber-200/70 bg-amber-50/90 text-amber-900 shadow-[0_25px_60px_-55px_rgba(124,71,15,0.35)]">
+          <div className="panel-light text-sm border border-[color:rgba(140,82,45,0.45)] bg-[color:rgba(58,34,24,0.75)] text-[color:#f2c89b] shadow-[0_25px_60px_-55px_rgba(124,71,15,0.35)]">
             {resourceError}
           </div>
         )}
@@ -220,13 +220,13 @@ export default function ResourceLibraryPage() {
           <section className="panel-light space-y-4">
             <header className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-indigo-950">Quick picks for today</h2>
-                <p className="text-sm text-slate-700">
+                <h2 className="text-lg font-semibold text-primary">Quick picks for today</h2>
+                <p className="text-sm text-secondary">
                   Based on your role, these are three resources members reach for most often. They stay anonymous and
                   respect your privacy selections.
                 </p>
               </div>
-              <span className="rounded-full border border-primary-200/60 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-indigo-900 shadow-[0_10px_28px_-22px_rgba(53,62,149,0.35)]">
+              <span className="rounded-full border border-[color:rgba(108,77,248,0.45)] bg-[color:rgba(36,38,74,0.75)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary shadow-[0_10px_28px_-22px_rgba(53,62,149,0.35)]">
                 Tailored suggestions
               </span>
             </header>
@@ -238,24 +238,24 @@ export default function ResourceLibraryPage() {
           </section>
         )}
 
-        <section className="space-y-4 panel-light">
+        <section className="panel-light space-y-4">
           <header>
-            <h2 className="text-lg font-semibold text-indigo-950">
+            <h2 className="text-lg font-semibold text-primary">
               {kind === 'all'
                 ? 'All available resources'
                 : `Resources filtered by ${RESOURCE_KINDS.find((entry) => entry.id === kind)?.label ?? 'format'}`}
             </h2>
-            <p className="text-sm text-slate-700">
+            <p className="text-sm text-secondary">
               {filteredResources.length} item{filteredResources.length === 1 ? '' : 's'} match your filters.
             </p>
           </header>
 
           {filteredResources.length === 0 ? (
-            <div className="panel-light-muted border border-dashed border-slate-300/70 text-sm text-slate-600">
+            <div className="panel-light-muted border border-dashed border-[color:rgba(71,83,130,0.35)] text-sm text-secondary">
               We don’t have a resource that matches those filters yet. Try clearing the tag or searching a broader term.
               You can also{' '}
               <a
-                className="text-indigo-700 underline"
+                className="text-[color:var(--accent-secondary)] underline"
                 href="mailto:hello@ownrecovery.app?subject=Resource%20suggestion"
               >
                 suggest a resource

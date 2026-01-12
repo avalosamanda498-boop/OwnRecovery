@@ -1,19 +1,43 @@
+.text-primary {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.text-muted {
+  color: rgba(148, 163, 184, 0.85) !important;
+}
+
+.surface-border {
+  border-color: var(--border-soft) !important;
+}
+
+.shadow-sm {
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.focus\\:ring-offset-2 {
+  --tw-ring-offset-color: var(--color-background);
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@import '../styles/theme.css';
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
-  --color-background: #040511;
-  --color-surface: rgba(22, 26, 46, 0.68);
-  --color-glow: rgba(76, 194, 255, 0.35);
-  --color-border: rgba(132, 150, 255, 0.2);
-  --color-text-primary: #e6edff;
-  --color-text-muted: #97a3c7;
-  --color-heading: #f1f5ff;
-  --shadow-soft: 0 40px 90px -60px rgba(19, 212, 255, 0.65);
-  --shadow-card: 0 25px 65px -45px rgba(119, 137, 255, 0.85);
+  --color-background: var(--bg-app);
+  --color-surface: var(--bg-surface);
+  --color-glow: rgba(108, 77, 248, 0.3);
+  --color-border: var(--border-soft);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-secondary);
+  --color-heading: var(--text-primary);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-card: var(--shadow-soft);
 }
 
 * {
@@ -53,13 +77,13 @@ h1, h2, h3, h4 {
 }
 
 a {
-  color: #7dd3ff;
+  color: var(--accent-secondary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: #b8f1ff;
+  color: #a5f0ff;
 }
 
 /* Custom scrollbar */
@@ -85,7 +109,7 @@ a:hover {
 /* Custom components */
 @layer components {
   .btn-primary {
-    @apply relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-primary-500 via-electric-violet to-secondary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_25px_50px_-20px_rgba(76,194,255,0.55)] transition-transform duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900;
+    @apply relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-primary-500 via-electric-violet to-secondary-500 px-5 py-2.5 text-sm font-semibold text-[color:var(--text-primary)] shadow-[0_25px_50px_-20px_rgba(76,194,255,0.55)] transition-transform duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent-secondary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)];
   }
 
   .btn-primary::after {
@@ -104,15 +128,21 @@ a:hover {
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-slate-100 backdrop-blur-xl transition-all duration-300 hover:border-neon-cyan/40 hover:shadow-[0_20px_45px_-30px_rgba(60,242,255,0.6)];
+    @apply inline-flex items-center justify-center rounded-2xl border border-[color:var(--border-soft)] bg-[color:rgba(32,38,66,0.75)] px-5 py-2.5 text-sm font-semibold text-[color:var(--text-primary)] backdrop-blur-xl transition-all duration-300;
+    box-shadow: 0 12px 30px -22px rgba(60, 213, 255, 0.35);
+  }
+
+  .btn-secondary:hover {
+    border-color: rgba(60, 213, 255, 0.5);
+    box-shadow: 0 20px 45px -30px rgba(60, 213, 255, 0.45);
   }
 
   .btn-success {
-    @apply inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-success-500 via-success-400 to-teal-300 px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-[0_20px_45px_-25px_rgba(34,197,94,0.55)] transition-transform duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-success-300/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900;
+    @apply inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-[0_20px_45px_-25px_rgba(34,197,94,0.55)] transition-transform duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)];
   }
 
   .card {
-    @apply relative overflow-hidden rounded-3xl border border-slate-200/70 bg-[rgba(246,248,255,0.93)] p-6 text-slate-900 shadow-[0_30px_75px_-55px_rgba(36,48,121,0.45)] backdrop-blur-xl;
+    @apply relative overflow-hidden rounded-3xl border border-[color:var(--border-soft)] bg-[color:var(--color-surface)] p-6 text-[color:var(--text-primary)] shadow-[var(--shadow-soft)] backdrop-blur-2xl;
   }
 
   .card::before {
@@ -120,14 +150,13 @@ a:hover {
     position: absolute;
     inset: -1px;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(199, 209, 255, 0.65), rgba(143, 203, 255, 0.45), transparent 70%);
-    opacity: 0.55;
+    background: linear-gradient(135deg, rgba(108, 77, 248, 0.28), rgba(60, 213, 255, 0.18), transparent 70%);
+    opacity: 0.4;
     pointer-events: none;
   }
 
   .panel-light {
-    @apply rounded-3xl border border-slate-200/70 bg-[rgba(245,247,255,0.96)] p-6 shadow-[0_30px_70px_-55px_rgba(35,46,120,0.35)] backdrop-blur-xl;
-    color: #0d1636;
+    @apply rounded-3xl border border-[color:var(--border-soft)] bg-[color:var(--color-surface)] p-6 text-[color:var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur-2xl;
   }
 
   .panel-light h1,
@@ -136,29 +165,28 @@ a:hover {
   .panel-light h4,
   .panel-light h5,
   .panel-light h6 {
-    color: #09123c !important;
+    color: var(--text-primary) !important;
   }
 
   .panel-light :is(p, span, li, label) {
-    color: #1a2549 !important;
+    color: var(--text-secondary) !important;
   }
 
   .panel-light-muted {
-    @apply rounded-3xl border border-slate-200/60 bg-[rgba(239,242,255,0.92)] p-4 shadow-[0_25px_60px_-55px_rgba(33,45,112,0.28)] backdrop-blur-lg;
-    color: #102047;
+    @apply rounded-3xl border border-[color:var(--border-soft)] bg-[color:var(--color-surface-muted)] p-4 text-[color:var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur-2xl;
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-slate-100 placeholder-slate-400 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-neon-cyan/70 focus:ring-offset-2 focus:ring-offset-slate-900;
-    box-shadow: inset 0 0 0 1px rgba(147, 197, 253, 0.08);
+    @apply w-full rounded-xl border border-[color:var(--border-soft)] bg-[rgba(29,38,64,0.72)] px-3 py-2 text-[color:var(--text-primary)] placeholder-[color:var(--text-muted)] transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-[color:var(--accent-secondary)] focus:ring-offset-2 focus:ring-offset-[color:var(--color-background)];
+    box-shadow: inset 0 0 0 1px rgba(64, 83, 140, 0.3);
   }
 
   .mood-emoji {
-    @apply text-2xl cursor-pointer transition-transform duration-200 hover:scale-110 text-slate-300;
+    @apply text-2xl cursor-pointer transition-transform duration-200 hover:scale-110 text-[color:var(--text-secondary)];
   }
 
   .mood-emoji.selected {
-    @apply scale-125 ring-2 ring-neon-cyan/70 rounded-full bg-white/5;
+    @apply scale-125 ring-2 ring-[color:var(--accent-secondary)] rounded-full bg-[rgba(60,213,255,0.18)];
   }
 }
 
@@ -192,7 +220,7 @@ a:hover {
 
 /* Mood tracking specific styles */
 .mood-scale {
-  @apply flex justify-between items-center rounded-2xl border border-white/10 bg-white/10 p-4 text-slate-100 backdrop-blur-xl;
+  @apply flex justify-between items-center rounded-2xl border border-[color:var(--border-soft)] bg-[color:rgba(28,34,58,0.7)] p-4 text-[color:var(--text-primary)] backdrop-blur-xl;
 }
 
 .craving-indicator {
@@ -221,36 +249,36 @@ a:hover {
 
 /* Global overrides for legacy utility combinations */
 .bg-white {
-  background-color: rgba(246, 248, 255, 0.96) !important;
-  color: #0d1636 !important;
-  border: 1px solid rgba(138, 155, 255, 0.32) !important;
-  backdrop-filter: blur(22px);
+  background-color: var(--color-surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-soft) !important;
+  backdrop-filter: blur(20px);
 }
 
 .bg-gray-50,
 .bg-gray-100 {
-  background-color: rgba(242, 245, 255, 0.94) !important;
-  color: #0f1a40 !important;
-  border: 1px solid rgba(172, 188, 255, 0.25) !important;
-  backdrop-filter: blur(20px);
+  background-color: var(--color-surface-muted) !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid rgba(80, 105, 160, 0.35) !important;
+  backdrop-filter: blur(18px);
 }
 
 .bg-white :is(h1, h2, h3, h4, h5, h6) {
-  color: #081032 !important;
+  color: var(--text-primary) !important;
 }
 
 .bg-white :is(p, span, li, label, button) {
-  color: #14204a !important;
+  color: var(--text-secondary) !important;
 }
 
 .bg-gray-50 :is(h1, h2, h3, h4, h5, h6),
 .bg-gray-100 :is(h1, h2, h3, h4, h5, h6) {
-  color: #0b1437 !important;
+  color: var(--text-primary) !important;
 }
 
 .bg-gray-50 :is(p, span, li, label, button),
 .bg-gray-100 :is(p, span, li, label, button) {
-  color: #1a2549 !important;
+  color: var(--text-secondary) !important;
 }
 
 .bg-primary-50,
@@ -259,12 +287,12 @@ a:hover {
 .bg-warning-50,
 .bg-danger-50 {
   position: relative;
-  background-color: rgba(247, 249, 255, 0.95) !important;
-  border: 1px solid rgba(136, 151, 255, 0.38) !important;
-  box-shadow: 0 32px 70px -55px rgba(42, 57, 124, 0.35);
-  color: #0d1533 !important;
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--border-soft) !important;
+  box-shadow: var(--shadow-soft);
+  color: var(--text-primary) !important;
   overflow: hidden;
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(22px);
 }
 
 .bg-primary-50::before,
@@ -276,8 +304,8 @@ a:hover {
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(175, 188, 255, 0.55), rgba(152, 228, 255, 0.4), transparent 65%);
-  opacity: 0.6;
+  background: linear-gradient(135deg, rgba(86, 77, 255, 0.22), rgba(60, 213, 255, 0.18), transparent 65%);
+  opacity: 0.45;
   pointer-events: none;
 }
 
@@ -291,23 +319,23 @@ a:hover {
 }
 
 .bg-primary-50 :is(p, span, li) {
-  color: rgba(30, 48, 109, 0.9) !important;
+  color: var(--text-secondary) !important;
 }
 
 .bg-secondary-50 :is(p, span, li) {
-  color: rgba(26, 54, 107, 0.9) !important;
+  color: var(--text-secondary) !important;
 }
 
 .bg-success-50 :is(p, span, li) {
-  color: rgba(21, 72, 67, 0.88) !important;
+  color: var(--text-secondary) !important;
 }
 
 .bg-warning-50 :is(p, span, li) {
-  color: rgba(111, 61, 10, 0.88) !important;
+  color: var(--text-secondary) !important;
 }
 
 .bg-danger-50 :is(p, span, li) {
-  color: rgba(102, 24, 32, 0.88) !important;
+  color: var(--text-secondary) !important;
 }
 
 .bg-primary-50 :is(h1, h2, h3, h4, h5, h6),
@@ -315,56 +343,6 @@ a:hover {
 .bg-success-50 :is(h1, h2, h3, h4, h5, h6),
 .bg-warning-50 :is(h1, h2, h3, h4, h5, h6),
 .bg-danger-50 :is(h1, h2, h3, h4, h5, h6) {
-  color: #07103b !important;
+  color: var(--text-primary) !important;
 }
 
-.border-gray-200,
-.border-gray-300 {
-  border-color: rgba(129, 140, 248, 0.18) !important;
-}
-
-.border-secondary-200 {
-  border-color: rgba(74, 194, 255, 0.28) !important;
-}
-
-.border-success-200 {
-  border-color: rgba(64, 231, 183, 0.24) !important;
-}
-
-.border-warning-100,
-.border-warning-200 {
-  border-color: rgba(255, 186, 102, 0.28) !important;
-}
-
-.text-gray-900,
-.text-gray-800 {
-  color: var(--color-heading) !important;
-}
-
-.text-gray-700,
-.text-gray-600 {
-  color: var(--color-text-muted) !important;
-}
-
-.text-gray-500,
-.text-gray-400 {
-  color: rgba(170, 182, 220, 0.78) !important;
-}
-
-.text-secondary-700,
-.text-secondary-600 {
-  color: #7dd3ff !important;
-}
-
-.text-success-700,
-.text-success-600 {
-  color: #5ef5c2 !important;
-}
-
-.shadow-sm {
-  box-shadow: var(--shadow-card) !important;
-}
-
-.focus\\:ring-offset-2 {
-  --tw-ring-offset-color: rgba(6, 11, 24, 0.85);
-}

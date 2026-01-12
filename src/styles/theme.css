@@ -1,0 +1,17 @@
+/* Design Tokens - Quantum AI Dark Theme */
+:root {
+  --bg-app: #050812;
+  --bg-surface: rgba(14, 20, 35, 0.92);
+  --bg-surface-muted: rgba(20, 29, 48, 0.88);
+  --accent-primary: #6c4dff;
+  --accent-secondary: #3cd5ff;
+  --text-primary: #e5e7ef;
+  --text-secondary: #98a2c3;
+  --text-muted: rgba(148, 163, 184, 0.9);
+  --border-strong: rgba(112, 128, 255, 0.35);
+  --border-soft: rgba(71, 84, 130, 0.3);
+  --shadow-soft: 0 28px 60px -40px rgba(52, 72, 140, 0.45);
+  --shadow-accent: 0 26px 60px -35px rgba(76, 213, 255, 0.45);
+}
+
+

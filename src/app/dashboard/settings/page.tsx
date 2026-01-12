@@ -78,30 +78,33 @@ export default function SettingsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600" />
+      <div className="relative flex min-h-screen items-center justify-center px-4">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#040511] via-[#0b1730] to-[#041029]" />
+        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-[color:var(--accent-secondary)]" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-12 px-4">
+    <div className="relative min-h-screen px-4 py-12">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#040511] via-[#0b1730] to-[#041029]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(110,64,255,0.18),transparent_55%)]" />
       <div className="mx-auto flex max-w-3xl flex-col gap-8">
-        <header className="rounded-3xl border border-primary-100 bg-white p-8 shadow-sm">
-          <h1 className="text-3xl font-bold text-gray-900">Privacy & safeguards</h1>
-          <p className="mt-2 text-sm text-gray-600">
+        <header className="panel-light p-8">
+          <h1 className="text-3xl font-bold text-primary">Privacy & safeguards</h1>
+          <p className="mt-2 text-sm text-secondary">
             Own Recovery keeps AI as gentle guidance while humans stay in control. Review how you appear to supporters,
             and manage your data here.
           </p>
-          <Link href="/dashboard" className="mt-4 inline-flex text-sm text-primary-600 underline">
+          <Link href="/dashboard" className="mt-4 inline-flex text-sm text-[color:var(--accent-secondary)] underline">
             Back to dashboard
           </Link>
         </header>
 
-        <section className="space-y-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="panel-light space-y-4">
           <header>
-            <h2 className="text-lg font-semibold text-gray-900">Anonymous mode</h2>
-            <p className="mt-1 text-sm text-gray-600">
+            <h2 className="text-lg font-semibold text-primary">Anonymous mode</h2>
+            <p className="mt-1 text-sm text-secondary">
               Use a non-identifiable display name anywhere supporters might see your information.
             </p>
           </header>
@@ -109,11 +112,11 @@ export default function SettingsPage() {
           <label className="flex items-start gap-3">
             <input
               type="checkbox"
-              className="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              className="mt-1 h-4 w-4 rounded border-[color:var(--border-soft)] bg-[rgba(29,38,64,0.72)] text-[color:var(--accent-secondary)] focus:ring-[color:var(--accent-secondary)]"
               checked={prefersAnonymous}
               onChange={(event) => setPrefersAnonymous(event.target.checked)}
             />
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-secondary">
               Show me as “Anonymous” to supporters and hide identifying details. I acknowledge my supporters will still
               see mood and craving trends that I choose to share.
             </span>
@@ -123,20 +126,20 @@ export default function SettingsPage() {
             type="button"
             onClick={handleSave}
             disabled={status === 'saving'}
-            className="inline-flex items-center gap-2 self-start rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="btn-primary inline-flex items-center gap-2 self-start px-5 py-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {status === 'saving' ? 'Saving…' : 'Save preference'}
           </button>
 
           {status === 'success' && (
-            <p className="text-xs font-medium text-emerald-700">Preference saved. You stay in control.</p>
+            <p className="text-xs font-medium text-[color:#6df3c4]">Preference saved. You stay in control.</p>
           )}
         </section>
 
-        <section className="space-y-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="panel-light space-y-4">
           <header>
-            <h2 className="text-lg font-semibold text-gray-900">What supporters can see</h2>
-            <p className="mt-1 text-sm text-gray-600">
+            <h2 className="text-lg font-semibold text-primary">What supporters can see</h2>
+            <p className="mt-1 text-sm text-secondary">
               You stay in control. Choose which insights appear for the supporters you invite. We always explain when
               something is hidden so expectations stay clear.
             </p>
@@ -181,16 +184,16 @@ export default function SettingsPage() {
             onChange={(value) => setPrivacySettings((prev) => ({ ...prev, show_badges: value }))}
           />
 
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-secondary">
             Changes apply instantly once you save. Supporters never see more than you allow, and every alert remains a
             suggestion—you choose what to act on.
           </p>
         </section>
 
-        <section className="space-y-4 rounded-3xl border border-rose-200 bg-rose-50 p-6 shadow-sm">
+        <section className="rounded-3xl border border-[color:rgba(234,84,124,0.35)] bg-[color:rgba(70,24,38,0.65)] p-6 shadow-[0_30px_70px_-50px_rgba(234,84,124,0.35)] text-secondary">
           <header>
-            <h2 className="text-lg font-semibold text-rose-800">Delete my data</h2>
-            <p className="mt-1 text-sm text-rose-700">
+            <h2 className="text-lg font-semibold text-primary">Delete my data</h2>
+            <p className="mt-1 text-sm text-secondary">
               This will delete your account, check-in history, badges, and supporter connections. You can always start
               fresh later.
             </p>
@@ -200,19 +203,19 @@ export default function SettingsPage() {
             type="button"
             onClick={handleDeleteData}
             disabled={deleteState === 'saving'}
-            className="inline-flex items-center gap-2 self-start rounded-xl border border-rose-300 bg-white px-4 py-2 text-sm font-semibold text-rose-700 shadow-sm transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center gap-2 self-start rounded-xl border border-[color:rgba(234,128,152,0.45)] bg-[rgba(74,26,38,0.75)] px-4 py-2 text-sm font-semibold text-primary shadow-[0_18px_45px_-28px_rgba(234,84,124,0.45)] transition hover:border-[color:rgba(234,156,176,0.6)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {deleteState === 'saving' ? 'Deleting…' : 'Delete everything and sign me out'}
           </button>
 
-          <p className="text-xs text-rose-700">
+          <p className="text-xs text-secondary">
             Advisory only: We recommend letting a supporter know before deleting so they understand why your data
             disappeared.
           </p>
         </section>
 
         {error && (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+          <div className="rounded-2xl border border-[color:rgba(234,128,152,0.45)] bg-[color:rgba(74,26,38,0.75)] p-4 text-sm text-primary">
             <p className="font-semibold">We ran into an issue</p>
             <p className="mt-1">{error}</p>
           </div>
@@ -234,15 +237,15 @@ function PrivacyToggle({
   onChange: (value: boolean) => void
 }) {
   return (
-    <label className="flex items-start gap-3 rounded-2xl border border-gray-200 bg-gray-50/80 p-4 transition hover:bg-gray-100">
+    <label className="panel-light-muted flex items-start gap-3 transition hover:border-[color:var(--accent-secondary)]/45">
       <input
         type="checkbox"
-        className="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+        className="mt-1 h-4 w-4 rounded border-[color:var(--border-soft)] bg-[rgba(29,38,64,0.72)] text-[color:var(--accent-secondary)] focus:ring-[color:var(--accent-secondary)]"
         checked={checked}
         onChange={(event) => onChange(event.target.checked)}
       />
-      <span className="space-y-1 text-sm text-gray-700">
-        <span className="block font-semibold text-gray-900">{label}</span>
+      <span className="space-y-1 text-sm text-secondary">
+        <span className="block font-semibold text-primary">{label}</span>
         <span>{description}</span>
       </span>
     </label>
