@@ -42,14 +42,14 @@ export function RecentBadges({
     <section className="panel-light">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-          <p className="text-sm text-gray-700">Badges you’ve earned from recent check-ins.</p>
+          <h2 className="text-lg font-semibold text-gray-400">{title}</h2>
+          <p className="text-sm text-gray-500">Badges you’ve earned from recent check-ins.</p>
         </div>
       </div>
 
       <div className="mt-4 space-y-3">
         {badges.length === 0 && (
-          <div className="panel-light-muted border border-dashed border-slate-300/70 text-sm text-gray-800">
+          <div className="panel-light-muted border border-dashed border-slate-300/70 text-sm text-gray-900">
             {emptyMessage}
           </div>
         )}
@@ -62,10 +62,10 @@ export function RecentBadges({
             <div className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-200/70 bg-white text-2xl text-amber-600 shadow-[0_10px_24px_-18px_rgba(122,91,24,0.45)]">
               {badge.icon ?? '🌟'}
             </div>
-            <div className="space-y-1 text-sm text-gray-800">
+            <div className="space-y-1 text-sm text-gray-900">
               <p className="font-semibold text-gray-900">{badge.badge_name}</p>
               {badge.description && <p className="text-gray-800">{badge.description}</p>}
-              <p className="text-xs text-gray-700">
+              <p className="text-xs text-gray-800">
                 {new Date(badge.earned_at).toLocaleString(undefined, {
                   dateStyle: 'medium',
                   timeStyle: 'short',
