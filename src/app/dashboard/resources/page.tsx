@@ -42,11 +42,12 @@ export default function ResourceLibraryPage() {
       try {
         const records = await fetchResources()
         if (cancelled) return
-        if (records.length > 0) {
-          setRemoteResources(records.map(adaptResourceRecord))
-        } else {
-          setRemoteResources([])
-        }
+
+        const adapted = records
+          .map((record) => adaptResourceRecord(record))
+          .filter((item): item is ResourceItem => item !== null)
+
+        setRemoteResources(adapted.length > 0 ? adapted : [])
         setResourceError(null)
       } catch (error: any) {
         if (cancelled) return
@@ -301,7 +302,12 @@ function labelForAudience(audience: ResourceAudience): string {
   }
 }
 
-function adaptResourceRecord(record: Resource): ResourceItem {
+function adaptResourceRecord(record: Resource): ResourceItem | null {
+  const url = typeof record.url === 'string' ? record.url.trim() : ''
+  if (!isHttpUrl(url)) {
+    return null
+  }
+
   const kind = mapResourceType(record.type)
   const tags = Array.isArray(record.tags) ? record.tags.filter((tag): tag is string => typeof tag === 'string') : []
   const audience = sanitizeAudienceList(record.target_audience)
@@ -311,7 +317,7 @@ function adaptResourceRecord(record: Resource): ResourceItem {
     title: record.title,
     description: record.description,
     kind,
-    url: record.url ?? '#',
+    url,
     tags,
     audience,
     focus: inferFocus(tags),
@@ -383,6 +389,16 @@ function formatNoteForType(kind: ResourceKind): string | undefined {
       return 'Audio guide'
     default:
       return undefined
+  }
+}
+
+function isHttpUrl(value: string): boolean {
+  if (!value) return false
+  try {
+    const url = new URL(value)
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  } catch {
+    return false
   }
 }
 
