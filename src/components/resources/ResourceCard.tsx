@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { RESOURCE_KINDS, type ResourceItem, type ResourceKind } from '@/data/resources'
 
 const KIND_LABEL_LOOKUP: Record<ResourceKind, string> = RESOURCE_KINDS.reduce(
@@ -13,6 +12,7 @@ const KIND_LABEL_LOOKUP: Record<ResourceKind, string> = RESOURCE_KINDS.reduce(
 
 export function ResourceCard({ resource }: { resource: ResourceItem }) {
   const kindLabel = KIND_LABEL_LOOKUP[resource.kind] ?? 'Resource'
+  const isExternalLink = /^https?:\/\//i.test(resource.url)
 
   return (
     <article className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:border-primary-200 hover:shadow-md">
@@ -62,15 +62,25 @@ export function ResourceCard({ resource }: { resource: ResourceItem }) {
       )}
 
       <div className="mt-auto">
-        <Link
-          href={resource.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-        >
-          Open resource
-          <span aria-hidden="true">↗</span>
-        </Link>
+        {isExternalLink ? (
+          <a
+            href={resource.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+          >
+            Open resource
+            <span aria-hidden="true">↗</span>
+          </a>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="inline-flex items-center gap-2 rounded-full bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-500 cursor-not-allowed"
+          >
+            Link coming soon
+          </button>
+        )}
       </div>
     </article>
   )
