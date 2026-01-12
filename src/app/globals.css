@@ -208,9 +208,60 @@ a:hover {
   backdrop-filter: blur(18px);
 }
 
+.bg-primary-50 {
+  background-color: rgba(77, 85, 255, 0.16) !important;
+  border-color: rgba(98, 110, 255, 0.28) !important;
+  color: var(--color-heading) !important;
+}
+
+.bg-secondary-50 {
+  background-color: rgba(42, 168, 255, 0.16) !important;
+  border-color: rgba(74, 194, 255, 0.28) !important;
+  color: var(--color-heading) !important;
+}
+
+.bg-success-50 {
+  background-color: rgba(28, 197, 143, 0.16) !important;
+  border-color: rgba(64, 231, 183, 0.24) !important;
+  color: var(--color-heading) !important;
+}
+
+.bg-warning-50 {
+  background-color: rgba(255, 177, 89, 0.18) !important;
+  border-color: rgba(255, 200, 127, 0.28) !important;
+  color: #0b1424 !important;
+}
+
+.bg-danger-50 {
+  background-color: rgba(255, 106, 106, 0.18) !important;
+  border-color: rgba(255, 132, 132, 0.26) !important;
+  color: var(--color-heading) !important;
+}
+
+.bg-primary-50 :is(p, span, li, h1, h2, h3, h4, h5, h6),
+.bg-secondary-50 :is(p, span, li, h1, h2, h3, h4, h5, h6),
+.bg-success-50 :is(p, span, li, h1, h2, h3, h4, h5, h6),
+.bg-warning-50 :is(p, span, li, h1, h2, h3, h4, h5, h6),
+.bg-danger-50 :is(p, span, li, h1, h2, h3, h4, h5, h6) {
+  color: inherit !important;
+}
+
 .border-gray-200,
 .border-gray-300 {
   border-color: rgba(129, 140, 248, 0.18) !important;
+}
+
+.border-secondary-200 {
+  border-color: rgba(74, 194, 255, 0.28) !important;
+}
+
+.border-success-200 {
+  border-color: rgba(64, 231, 183, 0.24) !important;
+}
+
+.border-warning-100,
+.border-warning-200 {
+  border-color: rgba(255, 186, 102, 0.28) !important;
 }
 
 .text-gray-900,
@@ -226,6 +277,16 @@ a:hover {
 .text-gray-500,
 .text-gray-400 {
   color: rgba(170, 182, 220, 0.78) !important;
+}
+
+.text-secondary-700,
+.text-secondary-600 {
+  color: #7dd3ff !important;
+}
+
+.text-success-700,
+.text-success-600 {
+  color: #5ef5c2 !important;
 }
 
 .shadow-sm {
